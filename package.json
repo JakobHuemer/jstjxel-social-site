@@ -1,0 +1,21 @@
+{
+  "name": "jstjxel-social-site",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "./backend/server.js",
+  "scripts": {
+    "dev": "nodemon ./backend/server.js"
+  },
+  "author": "jakkki_",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "fs": "^0.0.1-security",
+    "websocket": "^1.0.34",
+    "ws": "^8.13.0"
+  }
+}

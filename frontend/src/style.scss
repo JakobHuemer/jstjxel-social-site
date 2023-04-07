@@ -1,0 +1,243 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: white;
+  background-color: #1f1f23;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+$chat-color: #18181b;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.chat {
+  position: relative;
+
+  font-size: .9rem;
+  height: 800px;
+  width: 350px;
+  background-color: $chat-color;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+
+  overflow: hidden;
+
+  .chat-container {
+    width: 100%;
+    padding: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+
+    //flex: 1;
+  }
+
+  .comment-container {
+    position: absolute;
+    width: 100%;
+    padding: .6rem;
+
+    .comment-input-wrapper {
+      box-sizing: border-box;
+
+      display: flex;
+      align-items: end;
+      gap: .2rem;
+
+      padding: .2rem .4rem .2rem .4rem;
+      background: #3d3d40;
+      border-radius: .4rem;
+      border: 2px solid transparent;
+      //width: max-content;
+      transition: background .1s, border .1s;
+      //border: 2px #3d3d40;
+
+      &:hover {
+        border: 2px solid #303033;
+      }
+
+      &:focus-within {
+        border: 2px solid #6441a5;
+        background: black;
+      }
+
+
+      .comment-input {
+        box-sizing: content-box;
+        padding: .2rem 0;
+        //max-height: calc(1.08rem * 5);
+        //overflow-y: scroll;
+
+        font-family: Inter, serif;
+        font-size: .9rem;
+        //padding-right: 4rem;
+        background: none;
+        //background: rgba(255, 255, 255, .2);
+        resize: none;
+        border: none;
+        //width: 80%;
+        flex: 1;
+        margin: 0;
+        height: 1.08rem;
+        line-height: 1.2;
+
+        &:focus {
+          outline: none;
+        }
+
+      }
+
+
+      .comment-submit {
+        transition: background-size .2s;
+        background: url("assets/svg/paperplane.svg") no-repeat center center/ 50% ;
+        cursor: pointer;
+        //background: rgba(0,0,0,.3);
+        filter: invert(1);
+
+        position: relative;
+        box-sizing: border-box;
+        outline: none;
+        border: none;
+        border-radius: 0;
+        width: 10%;
+        height: calc(1.08rem + .4rem);
+
+        &:hover {
+          background: url("assets/svg/paperplane.svg") no-repeat center center/ 55% ;
+        }
+
+        &:active {
+          background: url("assets/svg/paperplane.svg") no-repeat center center/ 45% ;
+
+        }
+
+        &:focus {
+          outline: none;
+        }
+
+      }
+
+    }
+
+
+  }
+
+
+  .chat__title {
+    text-align: center;
+    color: #9f9f9f;
+    font-size: 90%;
+  }
+
+  .timestamp {
+    color: #797979;
+  }
+
+  .author {
+
+    font-weight: 700;
+
+    &::after {
+      content: ":";
+      color: white;
+    }
+  }
+
+
+  .notice-container {
+    position: absolute;
+    top: 0;
+    margin-inline: auto;
+    width: calc(100% - 1.6rem);
+    text-align: center;
+    margin-top: .8rem;
+    z-index: 999;
+    display: grid;
+    grid-template-columns: 1fr 5fr 1fr;
+    place-items: center;
+    background-color: #fda500;
+    border-radius: .4rem;
+    padding-inline: .4rem;
+
+    .fa-exclamation {
+      border-radius: 50%;
+      padding: 1rem;
+    }
+
+    .notice {
+      width: 100%;
+      padding: .5rem 0;
+    }
+
+    *:nth-child(3) {
+      cursor: pointer;
+    }
+
+
+  }
+
+}
+
+
+//Chat colors
+
+//.lime {
+//  color: #00ff7f;
+//}
+//
+//.purple {
+//  color: #8a2be2;
+//}
+//
+//.red {
+//  color: #ff0001;
+//}
+//
+//.blue {
+//  color: #0000ff;
+//}
+
+//.blueviolet { color: #8A2BE2; }
+//.chocolate { color: #D2691E; }
+//.coral { color: #FF7F50; }
+//.dodgerblue { color: #1E90FF; }
+//.firebrick { color: #B22222; }
+//.goldenrod { color: #DAA520; }
+//.seagreen { color: #2E8B57; }
+//.steelblue { color: #4682B4; }
+//.yellowgreen { color: #9ACD32; }
+//.aqua { color: #00FFFF; }
+//.black { color: #000000; }
+//.blue { color: #0000FF; }
+//.brown { color: #A52A2A; }
+//.green { color: #00FF00; }
+//.grey { color: #808080; }
+//.orange { color: #FFA500; }
+//.pink { color: #FFC0CB; }
+//.purple { color: #800080; }
+//.red { color: #FF0000; }
+//.white { color: #FFFFFF; }
+//.yellow { color: #FFFF00; }
+//.gold { color: #FFD700; }
+//.darkgreen { color: #006400; }

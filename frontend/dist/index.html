@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <link href="/vite.svg" rel="icon" type="image/svg+xml"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+          integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+          referrerpolicy="no-referrer" rel="stylesheet"/>
+
+    <title>Vite App</title>
+  <script type="module" crossorigin src="/assets/main-1eef5e45.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-3cfb730f.js">
+  <link rel="modulepreload" crossorigin href="/assets/data-19b56e87.js">
+  <link rel="stylesheet" href="/assets/index-195c2ddd.css">
+</head>
+<body>
+
+
+<div class="chat">
+    <!--    <div class="notice-container">-->
+    <!--        <i class="fa-solid fa-exclamation"></i>-->
+    <!--        <div class="notice"><span>Please refresh the page</span></div>-->
+    <!--        <i class="fa-solid fa-xmark"></i>-->
+    <!--    </div>-->
+
+        <div class="chat-container">
+
+
+                <p class="chat__title">Wilkommen im Chat</p>
+
+
+        </div>
+
+    <div class="comment-container">
+        <div class="comment-input-wrapper">
+            <textarea rows="1" class="comment-input"></textarea>
+            <input onsubmit="sendComment()" class="comment-submit" type="submit" value="">
+        </div>
+
+
+        <script>
+
+            const commentInput = document.querySelector('.comment-input');
+            commentInput.addEventListener('input', () => {
+                updateCommentInputHeight();
+            });
+
+            function updateCommentInputHeight() {
+
+                let style = (window.getComputedStyle) ?
+                    window.getComputedStyle(commentInput) : commentInput.currentStyle;
+
+                let lineHeight = parseInt(style.lineHeight, 10);
+                const fontSize = '0.9rem';
+                let height = calculateContentHeight(commentInput, parseInt(lineHeight));
+
+                let numberOfLines = Math.ceil(height / lineHeight);
+
+                let styleHeight = (numberOfLines - 1) * 1.08;
+                // commentInput.style.height = `${height}px`;
+                commentInput.style.height = `calc(${ styleHeight }rem)`;
+
+
+                let chatContainer = document.querySelector('.chat-container');
+                chatContainer.style.marginBottom = (styleHeight + 1.2) + 'rem';
+
+            }
+
+
+            var calculateContentHeight = function (ta, scanAmount) {
+                var origHeight = ta.style.height,
+                    height = ta.offsetHeight,
+                    scrollHeight = ta.scrollHeight,
+                    overflow = ta.style.overflow;
+                /// only bother if the ta is bigger than content
+                if (height >= scrollHeight) {
+                    /// check that our browser supports changing dimension
+                    /// calculations mid-way through a function call...
+                    ta.style.height = (height + scanAmount) + 'px';
+                    /// because the scrollbar can cause calculation problems
+                    ta.style.overflow = 'hidden';
+                    /// by checking that scrollHeight has updated
+                    if (scrollHeight < ta.scrollHeight) {
+                        /// now try and scan the ta's height downwards
+                        /// until scrollHeight becomes larger than height
+                        while (ta.offsetHeight >= ta.scrollHeight) {
+                            ta.style.height = (height -= scanAmount) + 'px';
+                        }
+                        /// be more specific to get the exact height
+                        while (ta.offsetHeight < ta.scrollHeight) {
+                            ta.style.height = (height++) + 'px';
+                        }
+                        /// reset the ta back to its original height
+                        ta.style.height = origHeight;
+                        /// put the overflow back
+                        ta.style.overflow = overflow;
+                        return height;
+                    }
+                } else {
+                    return scrollHeight;
+                }
+            };
+        </script>
+    </div>
+
+
+</div>
+
+
+</body>
+</html>

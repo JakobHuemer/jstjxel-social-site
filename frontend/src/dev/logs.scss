@@ -1,0 +1,56 @@
+* {
+  font-family: Consolas;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color-scheme: dark light;
+  margin: 2rem;
+  background: #18181b;
+  color: white;
+}
+
+.timestamp {
+  color: rgba(255,255,255,.8);
+}
+
+.protocol {
+
+}
+
+table {
+  width: 100%;
+  font-size: 16px;
+  border-collapse: collapse;
+  line-height: 1.5;
+
+  th,
+  td {
+    padding: .05rem 1rem;
+  }
+
+  th {
+    text-align: left;
+  }
+
+  tr:nth-child(even) {
+    background: rgba(255,255,255,.05);
+  }
+
+  //td:nth-child(4) {
+  //  width: 50%;
+  //}
+
+  td:nth-child(1) {
+    width: 250px;
+  }
+
+  td:nth-child(2) {
+    width: 100px;
+  }
+
+  td:nth-child(3) {
+    width: 200px;
+  }
+}
