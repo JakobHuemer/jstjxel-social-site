@@ -25,7 +25,7 @@ const webAppOptions = {
 
 webApp.use(express.static('./frontend/dist'));
 
-https.createServer(webAppOptions, webApp).listen(webPort, '127.0.0.1', () => {
+https.createServer(webAppOptions, webApp).listen(webPort, () => {
     httpLogger.log(`Webserver listening on port ${ webPort }`, 'web server');
 });
 
