@@ -170,7 +170,10 @@ function messageHandler(twitchChatBot) {
                         :
                             // console.log('The channel must have banned (/ban) the bot.');
                             // pLog('The channel must have banned (/ban) the bot.', 'TWITCH');
-                            twitchChatBot.chatSocket.close();
+                            console.log(parsedMessage)
+                            if (parsedMessage.tags?.["display-name"] === twitchChatBot.username) {
+                                twitchChatBot.logger.logWrn('The channel must have banned (/ban) the bot.', 'TWITCH');
+                            }
                             break;
                         case
                         'NOTICE'
