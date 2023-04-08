@@ -3,6 +3,7 @@ import './logs.scss';
 // import { BASE_IP } from '../main.js';
 // let BASE_IP = 'localhost';
 import { BASE_IP, WEBSOCKET_PORT } from '../data';
+import escapeHtml from 'escape-html';
 
 
 // let url = 'ws://' + window.location.hostname + ":" + WEBSOCKET_PORT;
@@ -43,7 +44,7 @@ ws.onmessage = function (event) {
     let data = JSON.parse(event.data);
     console.log(data);
     if (data.transport === 'log') {
-        addLogEntry(data.data.timestamp, data.data.protocol, data.data.subProtocol, data.data.message, data.data.color);
+        addLogEntry(data.data.timestamp, escapeHtml(data.data.protocol), escapeHtml(data.data.subProtocol), escapeHtml(data.data.message), data.data.color);
     }
 };
 

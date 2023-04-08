@@ -36,6 +36,6 @@ https.createServer(webAppOptions, webApp).listen(webPort, () => {
 
 import { TwitchChatBot } from './twitch/src/twitch-bot.js';
 
-const twitchChatBot = new TwitchChatBot(process.env.TWITCH_CLIENT_ID, process.env.TWITCH_CLIENT_SECRET, process.env.TWITCH_CLIENT_OAUTH_TOKEN, process.env.TWITCH_CLIENT_USERNAME, "jakkibot");
+const twitchChatBot = new TwitchChatBot(process.env.TWITCH_CLIENT_ID, process.env.TWITCH_CLIENT_SECRET, process.env.TWITCH_CLIENT_OAUTH_TOKEN, process.env.TWITCH_CLIENT_USERNAME, "jstjxel");
 
 twitchChatBot.listen();
