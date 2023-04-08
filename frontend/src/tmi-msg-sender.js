@@ -1,4 +1,3 @@
-import {BASE_IP} from './data';
 
 import tmi from 'tmi.js';
 

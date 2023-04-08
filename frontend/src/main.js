@@ -1,10 +1,9 @@
 import './style.scss';
 import escapeHtml from 'escape-html';
-import { BASE_IP, WEBSOCKET_PORT } from './data';
 
 
 // let ws = new WebSocket('ws://' + BASE_IP + ':4444')
-let url = 'wss://' + window.location.hostname + ":" + WEBSOCKET_PORT;
+let url = 'wss://' + window.location.hostname + ':4444';
 console.log("LETTING URL BE:", url)
 
 const logContainer = document.querySelector('.log-container');

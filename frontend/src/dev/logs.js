@@ -2,12 +2,11 @@ import './logs.scss';
 // import { BASE_IP } from '../main';
 // import { BASE_IP } from '../main.js';
 // let BASE_IP = 'localhost';
-import { BASE_IP, WEBSOCKET_PORT } from '../data';
 import escapeHtml from 'escape-html';
 
 
 // let url = 'ws://' + window.location.hostname + ":" + WEBSOCKET_PORT;
-let url = 'wss://' + window.location.hostname + ':' + WEBSOCKET_PORT;
+let url = 'wss://' + window.location.hostname + ':4444'
 
 const logContainer = document.querySelector('.log-container');
 
