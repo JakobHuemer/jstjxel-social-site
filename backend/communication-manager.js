@@ -1,6 +1,7 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import { EventEmitter } from 'events';
-
+import fs from 'fs';
+import https from 'https';
 
 let broadcast = (data) => {
     // console.log('default broadcast');
@@ -52,6 +53,8 @@ class CommunicationManager extends EventEmitter {
         super();
         this.emitter = new EventEmitter();
 
+
+
         // Loggs
         this.emitter.on('log', (data) => {
             let msg = {
@@ -93,12 +96,18 @@ class CommunicationManager extends EventEmitter {
             }
 
 
-
             broadcast(JSON.stringify(sendData));
         });
 
+
+        let server = https.createServer({
+            key: fs.readFileSync('./backend/ssl/jstjxel.de_private_key.key'),
+            cert: fs.readFileSync('./backend/ssl/jstjxel.de_ssl_certificate.cer'),
+            ca: fs.readFileSync('./backend/ssl/jstjxel.de_ssl_certificate_INTERMEDIATE.cer')
+        });
+
         // Websocket server
-        this.wsLogServer = new WebSocketServer({ port: 4444 });
+        this.wsLogServer = new WebSocketServer({ server });
 
         this.wsLogServer.on('connection', (ws) => {
 
@@ -118,6 +127,10 @@ class CommunicationManager extends EventEmitter {
                 });
             };
         });
+
+        server.listen(4444, () => {
+            console.log('Listening on port 443');
+        })
 
     }
 }
