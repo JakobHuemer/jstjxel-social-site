@@ -5,9 +5,9 @@ import './logs.scss';
 import { BASE_IP, WEBSOCKET_PORT } from '../data';
 
 
-// let ws = new WebSocket('ws://' + BASE_IP + ':4444')
-let url = 'ws://' + window.location.hostname + ":" + WEBSOCKET_PORT;
 // let url = 'ws://' + window.location.hostname + ":" + WEBSOCKET_PORT;
+let url = 'wss://' + window.location.hostname + ":" + WEBSOCKET_PORT;
+console.log("LETTING URL BE:", url)
 
 const logContainer = document.querySelector('.log-container');
 
