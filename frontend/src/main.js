@@ -1,50 +1,35 @@
 import './style.scss';
 import escapeHtml from 'escape-html';
 
-
 // let ws = new WebSocket('ws://' + BASE_IP + ':4444')
 let url = 'wss://' + window.location.hostname + ':4444';
 console.log("LETTING URL BE:", url)
 
-const logContainer = document.querySelector('.log-container');
+import { SocketManager } from './socket-manager';
 
-let ws = new WebSocket(url);
+let chatSocket = new SocketManager(['twitch-message']);
 
-// have to change because deletes every other element like comment input only delete comments in comment section
-// setupCommentSection()
+chatSocket.on('connect', () => {
+    console.log('Connected to chat server');
+});
 
-ws.onopen = function (event) {
-    console.log('Connected to server');
-    ws.send('Hello from frontend');
-};
+chatSocket.on('reconnect', () => {
+    console.log('Reconnected to chat server');
+});
+
+chatSocket.on('twitch-message', (data) => {
+    appendComment(data);
+});
+
+chatSocket.on('subConfirm', (subs) => {
+    console.log('Subscribed to topics: ' + subs);
+});
+
+chatSocket.on('error', (msg) => {
+    console.error("ERROR MESS:", msg);
+});
 
 
-ws.onclose = function (event) {
-    console.log('Connection closed');
-    console.log('RECONNECTING');
-    // ws.close();
-    // ws = new WebSocket('ws://' + BASE_IP + ':4444');
-    // setTimeout(connect, 5000)
-};
-
-ws.onerror = function (event) {
-    // ws.close();
-    // ws = new WebSocket('ws://' + BASE_IP + ':4444');
-    // setTimeout(connect, 5000)
-};
-
-ws.onconnectionstatechange = function (event) {
-    console.log('Connection state changed');
-    console.log(event);
-};
-
-ws.onmessage = function (event) {
-    let data = JSON.parse(event.data);
-    console.log(data);
-    if (data.transport === 'twitchmessage') {
-        appendComment(data.data);
-    }
-};
 
 
 let sendButton = document.querySelector('.comment-submit');

@@ -10,51 +10,32 @@ let url = 'wss://' + window.location.hostname + ':4444'
 
 const logContainer = document.querySelector('.log-container');
 
-let ws;
 
+// implememtation of the new socketManager
+import { SocketManager } from '../socket-manager';
+let logSocket = new SocketManager(['log']);
 
-function reconnect() {
-    connect()
+logSocket.on('connect', () => {
+    console.log('Connected to log server');
+});
+
+logSocket.on('reconnect', () => {
     addLogEntry('--- NEW ---', '--- NEW ---', '--- NEW ---', '--- NEW ---', '#6300c2');
-}
+});
 
-function connect() {
+logSocket.on('log', (data) => {
+    addLogEntry(data.timestamp, data.protocol, data.subProtocol, data.message, data.color);
+});
 
-    ws = new WebSocket(url);
+logSocket.on('subConfirm', (subs) => {
+    console.log('Subscribed to topics: ' + subs);
+});
 
-    ws.onopen = function (event) {
-        console.log('Connected to server');
-        // ws.send('Hello from frontend');
-    };
+logSocket.on("error", (msg) => {
+    console.error(msg);
+})
 
 
-    ws.onclose = function (event) {
-        console.log('Connection closed');
-        // console.log('RECONNECTING');
-        setTimeout(function() {
-            // connect();
-            reconnect();
-        }, 1000);
-    };
-
-    ws.onerror = function (event) {
-        ws.close()
-    };
-
-    ws.onconnectionstatechange = function (event) {
-        console.log('Connection state changed');
-        console.log(event);
-    };
-
-    ws.onmessage = function (event) {
-        let data = JSON.parse(event.data);
-        console.log(data);
-        if (data.transport === 'log') {
-            addLogEntry(data.data.timestamp, escapeHtml(data.data.protocol), escapeHtml(data.data.subProtocol), escapeHtml(data.data.message), data.data.color);
-        }
-    };
-}
-connect()
 
 let ifGoingToScroll = false;
 

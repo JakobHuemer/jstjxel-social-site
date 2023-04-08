@@ -1,6 +1,5 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import { EventEmitter } from 'events';
-import fs from 'fs';
 import https from 'https';
 import { options } from './certificate-options.js';
 
@@ -54,6 +53,15 @@ class CommunicationManager extends EventEmitter {
         super();
         this.emitter = new EventEmitter();
 
+        this.clientSubscriptions = new Map();
+
+        // OPTIONS VARIABLE
+        this.subOptions = [
+            'twitch-message',
+            'twitch-event',
+            'log',
+            'tiktok-event'
+        ];
 
         // Loggs
         this.emitter.on('log', (data) => {
@@ -67,16 +75,7 @@ class CommunicationManager extends EventEmitter {
         });
 
         // Twitch chat messages
-        this.emitter.on('twitchmessage', (data) => {
-            // let comment = {
-            //     message: parsedMessage.parameters,
-            //     author: parsedMessage.tags['display-name'],
-            //     timestamp: tempTime,
-            //     color: parsedMessage.tags.color,
-            //     bot: isBot,
-            //     command: isCommand,
-            // };
-
+        this.emitter.on('twitch-message', (data) => {
             // temporary fix for badges
             data.tags.badges = [];
 
@@ -99,18 +98,47 @@ class CommunicationManager extends EventEmitter {
             broadcast(JSON.stringify(sendData));
         });
 
-        let socketOptions = options
-
-
-        let server = https.createServer(socketOptions);
+        let server = https.createServer(options);
 
         // Websocket server
         this.wsLogServer = new WebSocketServer({ server });
 
         this.wsLogServer.on('connection', (ws) => {
 
-            ws.on('message', (msg) => {
+            ws.send(JSON.stringify({ transport: 'session_welcome', subOptions: this.subOptions }));
 
+            ws.on('message', (msg) => {
+                msg = JSON.parse(msg.toString());
+                switch (msg.transport) {
+                    case 'sub':
+                        if (!msg.subs) return ws.send(JSON.stringify({ transport: 'error', message: 'No subs' }));
+                        if (!this.clientSubscriptions.has(ws)) {
+                            const subs = new Set(msg.subs);
+                            this.clientSubscriptions.set(ws, subs);
+                            ws.send(JSON.stringify({ transport: 'subConfirm', subs: msg.subs }));
+                        } else {
+                            let subFlags = this.clientSubscriptions.get(ws);
+                            for (const sub of msg.subs) {
+                                subFlags.add(sub);
+                            }
+                            this.clientSubscriptions.set(ws, subFlags);
+                            ws.send(JSON.stringify({ transport: 'subConfirm', subs: msg.subs }));
+                        }
+                        break;
+                    case 'unsub':
+                        let subFlags = this.clientSubscriptions.get(ws);
+                        if (subFlags) {
+                            subFlags.delete(msg.subs);
+                            this.clientSubscriptions.set(ws, subFlags);
+                        }
+                        break;
+                    case 'close':
+                        ws.close();
+                        break;
+                    default:
+                        ws.send(JSON.stringify({ transport: 'error', message: 'Unknown transport' }));
+                        break;
+                }
             });
 
             ws.on('close', () => {
@@ -118,16 +146,18 @@ class CommunicationManager extends EventEmitter {
             });
 
             broadcast = (data) => {
-                this.wsLogServer.clients.forEach((client) => {
-                    if (client.readyState === WebSocket.OPEN) {
+                let subTopic = JSON.parse(data).transport;
+
+                for (const [client, subs] of this.clientSubscriptions.entries()) {
+                    if (subs.has(subTopic)) {
                         client.send(data);
                     }
-                });
+                }
             };
         });
 
         server.listen(4444, () => {
-            console.log('Listening on port 443');
+            // console.log('Listening on port 443');
         });
 
     }

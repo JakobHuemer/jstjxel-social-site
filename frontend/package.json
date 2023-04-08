@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "escape-html": "^1.0.3",
+    "events": "^3.3.0",
     "sass": "^1.60.0",
     "tmi.js": "^1.8.5",
     "ws": "^8.13.0"

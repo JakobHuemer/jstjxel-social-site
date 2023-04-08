@@ -1,6 +1,7 @@
 import { Logger } from '../../logger.js';
 import pkg from 'websocket';
 import axios from 'axios';
+import { SiteSocket } from '../../site-socket.js';
 
 const { client: WebSocketClient } = pkg;
 
@@ -119,6 +120,8 @@ export class TwitchEventSub {
         this.clientSecret = clientSecret;
         this.ttvUserName = ttvUserName;
         this.keepAliveCount = 0;
+
+        this.eventSerer = new SiteSocket("twitch-event")
 
         this.eventSocket = new WebSocketClient();
     }
