@@ -2,11 +2,11 @@ import './logs.scss';
 // import { BASE_IP } from '../main';
 // import { BASE_IP } from '../main.js';
 // let BASE_IP = 'localhost';
-import { BASE_IP } from '../data';
+import { BASE_IP, WEBSOCKET_PORT } from '../data';
 
 
 // let ws = new WebSocket('ws://' + BASE_IP + ':4444')
-let url = 'ws://' + BASE_IP + ':4444';
+let url = 'wss://' + BASE_IP + ':' + WEBSOCKET_PORT;
 
 const logContainer = document.querySelector('.log-container');
 
@@ -15,7 +15,7 @@ let ws = new WebSocket(url);
 
 ws.onopen = function (event) {
     console.log('Connected to server');
-    ws.send('Hello from frontend');
+    // ws.send('Hello from frontend');
 };
 
 

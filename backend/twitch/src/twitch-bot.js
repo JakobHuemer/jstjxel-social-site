@@ -51,7 +51,6 @@ export class TwitchChatBot extends EventEmitter {
     }
 
     async listen() {
-        this.chatSocket.connect('wss://irc-ws.chat.twitch.tv:443', 'irc');
 
         this.chatSocket.on('connect', async (conn) => {
             this.chatSocketConnection = conn
@@ -69,6 +68,9 @@ export class TwitchChatBot extends EventEmitter {
 
             ping(this.chatSocketConnection, this.logger, 60000, 1, 'Twitch IRC');
         });
+
+        this.chatSocket.connect('wss://irc-ws.chat.twitch.tv:443', 'irc');
+
     }
 
     async getBearerToken() {
@@ -171,7 +173,7 @@ function messageHandler(twitchChatBot) {
                             // console.log('The channel must have banned (/ban) the bot.');
                             // pLog('The channel must have banned (/ban) the bot.', 'TWITCH');
                             console.log(parsedMessage)
-                            if (parsedMessage.tags?.["display-name"] === twitchChatBot.username) {
+                            if (parsedMessage.source.nick === twitchChatBot.username) {
                                 twitchChatBot.logger.logWrn('The channel must have banned (/ban) the bot.', 'TWITCH');
                             }
                             break;

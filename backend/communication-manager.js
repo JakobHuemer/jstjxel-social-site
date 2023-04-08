@@ -107,7 +107,7 @@ class CommunicationManager extends EventEmitter {
             });
 
             ws.on('close', () => {
-                console.log('Client disconnected');
+                // console.log('Client disconnected');
             });
 
             broadcast = (data) => {

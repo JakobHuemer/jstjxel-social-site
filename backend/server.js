@@ -25,6 +25,9 @@ const webAppOptions = {
 
 webApp.use(express.static('./frontend/dist'));
 
+webApp.get('*', (req, res) => {
+    res.sendFile('./404/404.html' , {root: "./frontend/dist/"});
+});
 https.createServer(webAppOptions, webApp).listen(webPort, () => {
     httpLogger.log(`Webserver listening on port ${ webPort }`, 'web server');
 });
@@ -33,6 +36,6 @@ https.createServer(webAppOptions, webApp).listen(webPort, () => {
 
 import { TwitchChatBot } from './twitch/src/twitch-bot.js';
 
-const twitchChatBot = new TwitchChatBot(process.env.TWITCH_CLIENT_ID, process.env.TWITCH_CLIENT_SECRET, process.env.TWITCH_CLIENT_OAUTH_TOKEN, process.env.TWITCH_CLIENT_USERNAME, "jstjxel");
+const twitchChatBot = new TwitchChatBot(process.env.TWITCH_CLIENT_ID, process.env.TWITCH_CLIENT_SECRET, process.env.TWITCH_CLIENT_OAUTH_TOKEN, process.env.TWITCH_CLIENT_USERNAME, "jakkibot");
 
 twitchChatBot.listen();

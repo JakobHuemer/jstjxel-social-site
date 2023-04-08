@@ -1,10 +1,10 @@
 import './style.scss';
 import escapeHtml from 'escape-html';
-import { BASE_IP } from './data';
+import { BASE_IP, WEBSOCKET_PORT } from './data';
 
 
 // let ws = new WebSocket('ws://' + BASE_IP + ':4444')
-let url = 'ws://' + BASE_IP + ':4444';
+let url = 'wss://' + BASE_IP + ':' + WEBSOCKET_PORT;
 
 const logContainer = document.querySelector('.log-container');
 

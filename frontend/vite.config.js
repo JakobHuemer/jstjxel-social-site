@@ -11,6 +11,7 @@ export default defineConfig({
                 main: root + '/index.html',
                 logs: root + '/dev/logs.html',
                 twitchoverlay: root + '/twitchacc/overlay.html',
+                404: root + '/404/404.html',
             },
             external: [
                 /^node:.*/,
