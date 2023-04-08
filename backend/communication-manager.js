@@ -2,6 +2,7 @@ import WebSocket, { WebSocketServer } from 'ws';
 import { EventEmitter } from 'events';
 import fs from 'fs';
 import https from 'https';
+import { options } from './certificate-options.js';
 
 let broadcast = (data) => {
     // console.log('default broadcast');
@@ -54,7 +55,6 @@ class CommunicationManager extends EventEmitter {
         this.emitter = new EventEmitter();
 
 
-
         // Loggs
         this.emitter.on('log', (data) => {
             let msg = {
@@ -78,33 +78,31 @@ class CommunicationManager extends EventEmitter {
             // };
 
             // temporary fix for badges
-            data.tags.badges = []
+            data.tags.badges = [];
 
             let commentData = {
                 message: data.parameters,
                 author: data.tags['display-name'],
                 timestamp: new Date().toUTCString(),
                 color: data.tags.color,
-                bot: data.tags["display-name"] === process.env.TWITCH_CLIENT_USERNAME,
+                bot: data.tags['display-name'] === process.env.TWITCH_CLIENT_USERNAME,
                 command: data.parameters.startsWith('!'),
                 badges: data.tags.badges
-            }
+            };
 
             let sendData = {
-                transport: 'twitchmessage',
+                transport: 'twitch-message',
                 data: commentData
-            }
+            };
 
 
             broadcast(JSON.stringify(sendData));
         });
 
+        let socketOptions = options
 
-        let server = https.createServer({
-            key: fs.readFileSync('./backend/ssl/jstjxel.de_private_key.key'),
-            cert: fs.readFileSync('./backend/ssl/jstjxel.de_ssl_certificate.cer'),
-            ca: fs.readFileSync('./backend/ssl/jstjxel.de_ssl_certificate_INTERMEDIATE.cer')
-        });
+
+        let server = https.createServer(socketOptions);
 
         // Websocket server
         this.wsLogServer = new WebSocketServer({ server });
@@ -130,7 +128,7 @@ class CommunicationManager extends EventEmitter {
 
         server.listen(4444, () => {
             console.log('Listening on port 443');
-        })
+        });
 
     }
 }

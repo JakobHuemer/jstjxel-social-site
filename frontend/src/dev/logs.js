@@ -7,46 +7,55 @@ import escapeHtml from 'escape-html';
 
 
 // let url = 'ws://' + window.location.hostname + ":" + WEBSOCKET_PORT;
-let url = 'wss://' + window.location.hostname + ":" + WEBSOCKET_PORT;
-console.log("LETTING URL BE:", url)
+let url = 'wss://' + window.location.hostname + ':' + WEBSOCKET_PORT;
 
 const logContainer = document.querySelector('.log-container');
 
-let ws = new WebSocket(url);
+let ws;
 
 
-ws.onopen = function (event) {
-    console.log('Connected to server');
-    // ws.send('Hello from frontend');
-};
+function reconnect() {
+    connect()
+    addLogEntry('--- NEW ---', '--- NEW ---', '--- NEW ---', '--- NEW ---', '#6300c2');
+}
+
+function connect() {
+
+    ws = new WebSocket(url);
+
+    ws.onopen = function (event) {
+        console.log('Connected to server');
+        // ws.send('Hello from frontend');
+    };
 
 
-ws.onclose = function (event) {
-    console.log('Connection closed');
-    console.log('RECONNECTING');
-    // ws.close();
-    // ws = new WebSocket('ws://' + BASE_IP + ':4444');
-    // setTimeout(connect, 5000)
-};
+    ws.onclose = function (event) {
+        console.log('Connection closed');
+        // console.log('RECONNECTING');
+        setTimeout(function() {
+            // connect();
+            reconnect();
+        }, 1000);
+    };
 
-ws.onerror = function (event) {
-    // ws.close();
-    // ws = new WebSocket('ws://' + BASE_IP + ':4444');
-    // setTimeout(connect, 5000)
-};
+    ws.onerror = function (event) {
+        ws.close()
+    };
 
-ws.onconnectionstatechange = function (event) {
-    console.log('Connection state changed');
-    console.log(event);
-};
+    ws.onconnectionstatechange = function (event) {
+        console.log('Connection state changed');
+        console.log(event);
+    };
 
-ws.onmessage = function (event) {
-    let data = JSON.parse(event.data);
-    console.log(data);
-    if (data.transport === 'log') {
-        addLogEntry(data.data.timestamp, escapeHtml(data.data.protocol), escapeHtml(data.data.subProtocol), escapeHtml(data.data.message), data.data.color);
-    }
-};
+    ws.onmessage = function (event) {
+        let data = JSON.parse(event.data);
+        console.log(data);
+        if (data.transport === 'log') {
+            addLogEntry(data.data.timestamp, escapeHtml(data.data.protocol), escapeHtml(data.data.subProtocol), escapeHtml(data.data.message), data.data.color);
+        }
+    };
+}
+connect()
 
 let ifGoingToScroll = false;
 

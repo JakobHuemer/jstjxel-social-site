@@ -6,36 +6,91 @@ import { config } from 'dotenv';
 config();
 
 
-
-console.log(fs.readdirSync('./backend/ssl'));
 const httpLogger = new Logger('HTTP');
 
 // WEB SERVER -------------------------------------------------------------------------
 import https from 'https';
 import fs from 'fs';
 import express from 'express';
+
 const webApp = express();
 const webPort = 443;
-const webAppOptions = {
-    key: fs.readFileSync('./backend/ssl/jstjxel.de_private_key.key'),
-    cert: fs.readFileSync('./backend/ssl/jstjxel.de_ssl_certificate.cer'),
-    ca: fs.readFileSync("./backend/ssl/jstjxel.de_ssl_certificate_INTERMEDIATE.cer")
-}
+
+import { options } from './certificate-options.js';
+
+const webAppOptions = options;
+
+// Middle ware auths
+import { hasSharedSecret } from './https-middleware.js';
+
+// all sites
+webApp.get("/dev/logs.html", hasSharedSecret, (req, res) => {
+    res.sendFile('./dev/logs.html', { root: './frontend/dist/' });
+})
+
+webApp.get('/dev/logs', hasSharedSecret, (req, res) => {
+    res.sendFile('./dev/logs.html', { root: './frontend/dist/' });
+});
+
+webApp.get("/", hasSharedSecret, (req, res) => {
+    res.sendFile('./index.html', { root: './frontend/dist/' });
+})
+
+webApp.get('/linktree', (req, res) => {
+    res.sendFile('./linktree/linktree.html', { root: './frontend/dist/' });
+});
+
+webApp.get('/twitchacc/overlay', hasSharedSecret, (req, res) => {
+    res.sendFile('./twitchacc/overlay.html', { root: './frontend/dist/' });
+});
+
 
 
 webApp.use(express.static('./frontend/dist'));
 
-webApp.get('*', (req, res) => {
-    res.sendFile('./404/404.html' , {root: "./frontend/dist/"});
-});
+
+// webApp.get('*', (req, res) => {
+//     res.sendFile('./404/404.html', { root: './frontend/dist/' });
+// });
+
+
 https.createServer(webAppOptions, webApp).listen(webPort, () => {
     httpLogger.log(`Webserver listening on port ${ webPort }`, 'web server');
 });
 
 // TWITCH CHAT BOT -------------------------------------------------------------------------
 
+
 import { TwitchChatBot } from './twitch/src/twitch-bot.js';
 
-const twitchChatBot = new TwitchChatBot(process.env.TWITCH_CLIENT_ID, process.env.TWITCH_CLIENT_SECRET, process.env.TWITCH_CLIENT_OAUTH_TOKEN, process.env.TWITCH_CLIENT_USERNAME, "jstjxel");
+const clientId = process.env.TWITCH_CLIENT_ID;
+const clientSecret = process.env.TWITCH_CLIENT_SECRET;
+const oauthToken = process.env.TWITCH_CLIENT_OAUTH_TOKEN;
+const clientUserName = process.env.TWITCH_CLIENT_USERNAME;
+const channel = 'jstjxel';
+
+const twitchChatBot = new TwitchChatBot(
+                clientId,
+                clientSecret,
+                oauthToken,
+                clientUserName,
+                channel
+            );
 
 twitchChatBot.listen();
+
+// TWITCH EVENTSUB -------------------------------------------------------------------------
+
+import { TwitchEventSub } from './twitch/src/eventsub.js';
+
+const userName = 'jstjxel';
+const userAccessToken = process.env.TWITCH_USER_ACCESS_TOKEN_JIXEL;
+
+const twitchEventSub = new TwitchEventSub(
+                'jstjxel',
+                clientId,
+                clientSecret,
+                userAccessToken
+            );
+
+twitchEventSub.listen();

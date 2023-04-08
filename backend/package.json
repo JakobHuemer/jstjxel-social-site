@@ -15,6 +15,7 @@
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
     "https": "^1.0.0",
+    "tiktok-live-connector": "^1.0.3",
     "ws": "^8.13.0"
   }
 }

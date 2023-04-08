@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
+
 * {
-  font-family: Consolas;
+  font-family: 'Inconsolata', monospace;;
   margin: 0;
   padding: 0;
 }
@@ -12,7 +14,7 @@ body {
 }
 
 .timestamp {
-  color: rgba(255,255,255,.8);
+  color: rgba(255, 255, 255, .8);
 }
 
 .protocol {
@@ -35,7 +37,7 @@ table {
   }
 
   tr:nth-child(even) {
-    background: rgba(255,255,255,.05);
+    background: rgba(255, 255, 255, .05);
   }
 
   //td:nth-child(4) {

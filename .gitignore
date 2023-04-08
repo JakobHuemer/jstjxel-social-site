@@ -4,3 +4,5 @@ node_modules/
 .vscode
 #data.js
 ssl/
+certificate-options.js
+https-middleware.js

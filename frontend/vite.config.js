@@ -12,6 +12,7 @@ export default defineConfig({
                 logs: root + '/dev/logs.html',
                 twitchoverlay: root + '/twitchacc/overlay.html',
                 404: root + '/404/404.html',
+                linktree: root + '/linktree/linktree.html'
             },
             external: [
                 /^node:.*/,

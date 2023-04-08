@@ -30,13 +30,13 @@ export class TwitchChatBot extends EventEmitter {
         super();
         this.logger = new Logger('TTV-BOT');
         this.clientId = client_id;
-        this.clientSecrete = client_secret;
+        this.clientSecret = client_secret;
         this.username = username;
         this.oauthToken = oathToken;
         this.channel = channel;
         this.chatSocket = new WebSocketClient();
 
-        this.messageServer = new SiteSocket('twitchmessage');
+        this.messageServer = new SiteSocket('twitch-message');
     }
 
     async send(message) {
@@ -79,7 +79,7 @@ export class TwitchChatBot extends EventEmitter {
             'https://id.twitch.tv/oauth2/token',
             new URLSearchParams({
                 'client_id': this.clientId,
-                'client_secret': this.clientSecrete,
+                'client_secret': this.clientSecret,
                 'grant_type': 'client_credentials'
             })
         );
@@ -172,7 +172,7 @@ function messageHandler(twitchChatBot) {
                         :
                             // console.log('The channel must have banned (/ban) the bot.');
                             // pLog('The channel must have banned (/ban) the bot.', 'TWITCH');
-                            console.log(parsedMessage)
+                            // console.log(parsedMessage)
                             if (parsedMessage.source.nick === twitchChatBot.username) {
                                 twitchChatBot.logger.logWrn('The channel must have banned (/ban) the bot.', 'TWITCH');
                             }

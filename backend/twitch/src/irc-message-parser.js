@@ -243,7 +243,7 @@ function parseCommand(rawCommandComponent, logger) {
             logger.log(`numeric message: ${ commandParts[0] }`, 'TW info');
             return null;
         default:
-            logger.wrn(`\nUnexpected command: ${ commandParts[0] }\n`);
+            logger.logWrn(`\nUnexpected command: ${ commandParts[0] }\n`);
             return null;
     }
 
