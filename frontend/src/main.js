@@ -1,13 +1,13 @@
 import './style.scss';
 import escapeHtml from 'escape-html';
+import { SocketManager } from './socket-manager';
+import { TmiHandler } from './tmi-msg-sender';
 
 // let ws = new WebSocket('ws://' + BASE_IP + ':4444')
 let url = 'wss://' + window.location.hostname + ':4444';
 console.log("LETTING URL BE:", url)
 
-import { SocketManager } from './socket-manager';
-
-let chatSocket = new SocketManager(['twitch-message']);
+let chatSocket = new SocketManager(['twitch-message', "tiktok-event"]);
 
 chatSocket.on('connect', () => {
     console.log('Connected to chat server');
@@ -19,6 +19,10 @@ chatSocket.on('reconnect', () => {
 
 chatSocket.on('twitch-message', (data) => {
     appendComment(data);
+});
+
+chatSocket.on('tiktok-event', (data) => {
+    appendTikTokComment(data);
 });
 
 chatSocket.on('subConfirm', (subs) => {
@@ -62,11 +66,48 @@ function setupCommentSection() {
 //
 function appendComment(comment) {
     let commentContainer = document.querySelector('.chat-container');
-    let localTime = new Date(comment.timestamp);
-    console.log(localTime);
-    comment.timestamp = `${ String(localTime.getHours()).padStart(2, '0') }:${ String(localTime.getMinutes()).padStart(2, '0') }`;
+    comment.timestamp = `${ String(comment.timestamp.getHours()).padStart(2, '0') }:${ String(comment.timestamp.getMinutes()).padStart(2, '0') }`;
     let elem = `<div class="twitch-message"> <span class="timestamp">${ comment.timestamp }</span> <span class="author" style="color: ${ comment.color }">${ escapeHtml(comment.author) }</span> <span class="message">${ escapeHtml(comment.message) }</span></div>`;
     commentContainer.innerHTML += elem;
+}
+
+function appendTikTokComment(data) {
+    // let eventData = {
+    //     comment: data.comment,
+    //     nickname: data.nickname,
+    //     uniqueId: data.uniqueId,
+    //     profilePictureUrl: data.profilePictureUrl,
+    //     followRole: data.followRole,
+    //     isModerator: data.isModerator,
+    //     isSubscriber: data.isSubscriber,
+    // };
+
+    let commentContainer = document.querySelector('.chat-container');
+
+    let timeStamp = document.createElement('span');
+    timeStamp.classList.add('timestamp');
+    timeStamp.innerHTML = `${ data.timestamp.getHours() }:${ data.timestamp.getMinutes() }`;
+
+    let profilePicture = document.createElement('img');
+    profilePicture.classList.add('profile-picture');
+    profilePicture.src = data.profilePictureUrl;
+
+    let author = document.createElement('span');
+    author.classList.add('author');
+    author.innerHTML = data.nickname;
+
+    let message = document.createElement('span');
+    message.classList.add('message');
+    message.innerHTML = data.comment;
+
+    let elem = document.createElement('div');
+    elem.classList.add('tiktok-message');
+    elem.appendChild(timeStamp);
+    elem.appendChild(profilePicture);
+    elem.appendChild(author);
+    elem.appendChild(message);
+
+    commentContainer.appendChild(elem);
 }
 
 // setupCommentSection()
@@ -142,7 +183,6 @@ async function getUserName(token) {
     return data.data[0].login;
 }
 
-import {TmiHandler} from './tmi-msg-sender';
 let tmiClient
 
 async function sendComment() {

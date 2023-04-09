@@ -1,4 +1,4 @@
-import WebSocket, { WebSocketServer } from 'ws';
+import { WebSocketServer } from 'ws';
 import { EventEmitter } from 'events';
 import https from 'https';
 import { options } from './certificate-options.js';
@@ -11,29 +11,37 @@ let broadcast = (data) => {
 
 function logParser(msg) {
     // data.timestamp = new Date().getTime();
+
+    let d = msg.data.timestamp.split(',');
+    let localTimestamp = new Date(d[0], d[1], d[2], d[3], d[4], d[5], d[6]);
+    localTimestamp = formatDate(localTimestamp);
+    // msg.data.timestamp = formatDate(msg.data.timestamp);
+
     msg.data.color = '#FFFFFF';
     switch (msg.data.type) {
         case 'log':
-            console.log(`[${ msg.data.timestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            console.log(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
             msg.data.color = '#FFFFFF';
             break;
         case 'err':
-            console.error(`[${ msg.data.timestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            console.error(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
             msg.data.color = '#FF0000';
             break;
         case 'inf':
-            console.info(`[${ msg.data.timestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            console.info(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
             msg.data.color = '#00FF00';
             break;
         case 'wrn':
-            console.warn(`[${ msg.data.timestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            console.warn(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
             msg.data.color = '#FFFF00';
             break;
         default:
             console.log('default');
-            console.log(`[${ msg.data.timestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            console.log(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
     }
+
     broadcast(JSON.stringify(msg));
+
 }
 
 // SENDING ALLWAYS:
@@ -47,6 +55,16 @@ Always with transport and data
 *
 * */
 
+
+function toTimeString(ts) {
+    return ts.getUTCFullYear() + "," +
+        ts.getUTCMonth() + "," +
+        ts.getUTCDate() + "," +
+        ts.getUTCHours() + "," +
+        ts.getUTCMinutes() + "," +
+        ts.getUTCSeconds() + "," +
+        ts.getUTCMilliseconds();
+}
 
 class CommunicationManager extends EventEmitter {
     constructor() {
@@ -65,12 +83,15 @@ class CommunicationManager extends EventEmitter {
 
         // Loggs
         this.emitter.on('log', (data) => {
+            data.timestamp = toTimeString(data.timestamp);
+
             let msg = {
                 transport: 'log',
                 data: data
             };
-            msg.data.timestamp = new Date(msg.data.timestamp);
-            msg.data.timestamp = getDate(msg.data.timestamp);
+
+            // msg.data.timestamp = new Date(msg.data.timestamp);
+            // msg.data.timestamp = getDate(msg.data.timestamp);
             logParser(msg);
         });
 
@@ -78,11 +99,12 @@ class CommunicationManager extends EventEmitter {
         this.emitter.on('twitch-message', (data) => {
             // temporary fix for badges
             data.tags.badges = [];
+            data.timestamp = toTimeString(data.timestamp);
 
             let commentData = {
                 message: data.parameters,
                 author: data.tags['display-name'],
-                timestamp: new Date().toUTCString(),
+                timestamp: data.timestamp,
                 color: data.tags.color,
                 bot: data.tags['display-name'] === process.env.TWITCH_CLIENT_USERNAME,
                 command: data.parameters.startsWith('!'),
@@ -97,6 +119,19 @@ class CommunicationManager extends EventEmitter {
 
             broadcast(JSON.stringify(sendData));
         });
+
+        // TikTOk
+        this.emitter.on('tiktok-event', (data) => {
+
+            data.timestamp = toTimeString(data.timestamp)
+
+            let sendData = {
+                transport: 'tiktok-event',
+                data: data
+            };
+            broadcast(JSON.stringify(sendData));
+        });
+
 
         let server = https.createServer(options);
 
@@ -167,10 +202,6 @@ export const communicationManager = new CommunicationManager();
 
 // End of getting MESSAGES
 
-
-function getDate(date) {
-    return formatDate(date);
-}
 
 const formatDate = (date) => `${ date.getFullYear() }-` +
     `${ (date.getMonth() + 1).toString().padStart(2, '0') }-` +

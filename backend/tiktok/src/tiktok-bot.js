@@ -154,21 +154,61 @@ export class TikTokChatBot {
             }
         });
 
-        this.ttLiveConn.on('chat', (data) => {
-            console.log('TTDATA:', data);
-        });
-
-        this.ttLiveConn.on('error', (err) => {
-            console.error('TTERROR:', err);
-        });
-
         this.ttLiveConn.on('member', (data) => {
-            console.log('TTMEMBERDATA:', data);
+            this.eventHandler('member', data);
+        });
+
+        this.ttLiveConn.on('chat', (data) => {
+            this.eventHandler('chat', data);
         });
 
         this.ttLiveConn.on('gift', (data) => {
-            console.log('TTGIFT:', data);
+            this.eventHandler('gift', data);
         });
+
+        this.ttLiveConn.on('roomUser', (data) => {
+            this.eventHandler('roomUser', data);
+        });
+
+        this.ttLiveConn.on('like', (data) => {
+            this.eventHandler('like', data);
+        });
+
+        this.ttLiveConn.on('follow', (data) => {
+            this.eventHandler('follow', data);
+        });
+
+        this.ttLiveConn.on('envelope', (data) => {
+            this.eventHandler('envelope', data);
+        });
+
+        this.ttLiveConn.on('questionNew', (data) => {
+            this.eventHandler('questionNew', data);
+        });
+
+        this.ttLiveConn.on('liveIntro', (data) => {
+            this.eventHandler('liveIntro', data);
+        });
+
+        this.ttLiveConn.on('subscribe', (data) => {
+            this.eventHandler('subscribe', data);
+        });
+
+        this.ttLiveConn.on('error', (err) => {
+            this.ttLogger.logErr(err, 'stream');
+        });
+
+        this.ttLiveConn.on('connected', () => {
+            this.ttLogger.logInf('Connected to stream', 'stream');
+        });
+
+        this.ttLiveConn.on('disconnected', () => {
+            this.ttLogger.logInf('Disconnected from stream', 'stream');
+        });
+
+        this.ttLiveConn.on('rawData', (messageTypeName, binary) => {
+            console.log("THIS IS THE rawData EVEnt from TIKTOK LIVE CONNECTION:", messageTypeName, binary);
+        })
     }
 
 
@@ -259,7 +299,7 @@ export class TikTokChatBot {
                     isSubscriber: data.isSubscriber,
                     displayType: data.displayType,
                     label: data.label,
-                }
+                };
                 break;
             case 'follow':
                 eventData = {
@@ -269,7 +309,7 @@ export class TikTokChatBot {
                     followRole: data.followRole,
                     displayType: data.displayType,
                     label: data.label,
-                }
+                };
                 break;
             case 'envelope':
                 eventData = {
@@ -281,7 +321,7 @@ export class TikTokChatBot {
                     isSubscriber: data.isSubscriber,
                     coins: data.coins,
                     canOpen: data.canOpen,
-                }
+                };
                 break;
             case 'questionNew':
                 eventData = {
@@ -293,7 +333,7 @@ export class TikTokChatBot {
                     isModerator: data.isModerator,
                     isSubscriber: data.isSubscriber,
 
-                }
+                };
                 break;
             case 'liveIntro':
                 eventData = {
@@ -302,7 +342,7 @@ export class TikTokChatBot {
                     nickname: data.nickname,
                     profilePictureUrl: data.profilePictureUrl,
                     followerCount: data.followerCount,
-                }
+                };
                 break;
             case 'subscribe':
                 eventData = {
@@ -314,7 +354,7 @@ export class TikTokChatBot {
                     profilePictureUrl: data.profilePictureUrl,
                     displayType: data.displayType,
                     label: data.label,
-                }
+                };
                 break;
             default:
                 eventData = data;
@@ -323,7 +363,7 @@ export class TikTokChatBot {
 
         serverData.eventData = eventData;
 
-        this.ttMessageServer.send(serverData)
+        this.ttMessageServer.send(serverData);
 
     }
 }

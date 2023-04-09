@@ -9,13 +9,13 @@ export class Logger {
     }
 
     log(message, subProtocol) {
-        let currDate = new Date();
         let data = {
             message: message,
             protocol: this.PROTOCOL,
             subProtocol: subProtocol.replace(/\s+/g, '-').toUpperCase(),
             type: 'log',
-            timestamp: currDate.toUTCString().replace(' GMT', `.${ currDate.getUTCMilliseconds() } GMT`),
+            timestamp: new Date()
+            // timestamp: new Date().toUTCString().replace(' GMT', `.${ currDate.getUTCMilliseconds() } GMT`),
 
         };
         communicationManager.emitter.emit('log', data);
@@ -28,33 +28,31 @@ export class Logger {
             protocol: this.PROTOCOL,
             subProtocol: subProtocol.replace(/\s+/g, '-').toUpperCase(),
             type: 'err',
-            timestamp: new Date().toUTCString().replace(' GMT', `.${ currDate.getUTCMilliseconds() } GMT`),
+            timestamp: currDate
 
         };
         communicationManager.emitter.emit('log', data);
     }
 
     logInf(message, subProtocol) {
-        let currDate = new Date();
         let data = {
             message: message,
             protocol: this.PROTOCOL,
             subProtocol: subProtocol.replace(/\s+/g, '-').toUpperCase(),
             type: 'inf',
-            timestamp: new Date().toUTCString().replace(' GMT', `.${ currDate.getUTCMilliseconds() } GMT`),
+            timestamp: new Date()
 
         };
         communicationManager.emitter.emit('log', data);
     }
 
     logWrn(message, subProtocol) {
-        let currDate = new Date();
         let data = {
             message: message,
             protocol: this.PROTOCOL,
             subProtocol: subProtocol.replace(/\s+/g, '-').toUpperCase(),
             type: 'wrn',
-            timestamp: new Date().toUTCString().replace(' GMT', `.${ currDate.getUTCMilliseconds() } GMT`),
+            timestamp: new Date()
 
         };
         communicationManager.emitter.emit('log', data);

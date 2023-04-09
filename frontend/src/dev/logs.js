@@ -24,8 +24,17 @@ logSocket.on('reconnect', () => {
 });
 
 logSocket.on('log', (data) => {
+    data.timestamp = formatDate(data.timestamp);
     addLogEntry(data.timestamp, data.protocol, data.subProtocol, data.message, data.color);
 });
+
+const formatDate = (date) => `${ date.getFullYear() }-` +
+    `${ (date.getMonth() + 1).toString().padStart(2, '0') }-` +
+    `${ date.getDate().toString().padStart(2, '0') } ` +
+    `${ date.getHours().toString().padStart(2, '0') }:` +
+    `${ date.getMinutes().toString().padStart(2, '0') }:` +
+    `${ date.getSeconds().toString().padStart(2, '0') }.` +
+    `${ date.getMilliseconds().toString().padStart(3, '0') }`;
 
 logSocket.on('subConfirm', (subs) => {
     console.log('Subscribed to topics: ' + subs);
