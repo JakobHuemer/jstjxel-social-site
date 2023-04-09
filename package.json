@@ -5,7 +5,8 @@
   "description": "",
   "main": "./backend/server.js",
   "scripts": {
-    "dev": "nodemon ./backend/server.js"
+    "dev": "nodemon ./backend/server.js",
+    "start": "node ./backend/server.js"
   },
   "author": "jakkki_",
   "license": "ISC",
