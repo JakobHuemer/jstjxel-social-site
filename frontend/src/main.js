@@ -3,11 +3,56 @@ import escapeHtml from 'escape-html';
 import { SocketManager } from './socket-manager';
 import { TmiHandler } from './tmi-msg-sender';
 
+
+if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    // Not mobile
+    let chatContainer = document.querySelector('.chat');
+
+    let popUpString = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d=\"M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z\"/></svg>"
+
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(popUpString, 'image/svg+xml');
+    let popUpChat = svgDoc.querySelector('svg');
+    popUpChat.classList.add('popup-chat');
+
+    chatContainer.appendChild(popUpChat)
+
+    popUpChat.addEventListener('click', () => {
+        let chatUrl = "https://" + window.location.hostname + "/stream/chat"
+        let title = "Chat"
+
+        let w = 350
+
+        // Fixes dual-screen position                             Most browsers      Firefox
+        const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+        const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
+
+        const width = 350
+        const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+        const systemZoom = width / window.screen.availWidth;
+        const left = (width - w) / 2 / systemZoom + dualScreenLeft;
+        const top = 0
+        const newWindow = window.open(chatUrl, title,
+            `
+        scrollbars=yes,
+        width=${ width },
+        height=${ height },
+        top=${ top },
+        left=${ left }
+        `
+        );
+
+        if (window.focus) newWindow.focus();
+
+    });
+
+}
+
 // let ws = new WebSocket('ws://' + BASE_IP + ':4444')
 let url = 'wss://' + window.location.hostname + ':4444';
-console.log("LETTING URL BE:", url)
 
-let chatSocket = new SocketManager(['twitch-message', "tiktok-event"]);
+let chatSocket = new SocketManager(['twitch-message', 'tiktok-event']);
 
 chatSocket.on('connect', () => {
     console.log('Connected to chat server');
@@ -22,7 +67,15 @@ chatSocket.on('twitch-message', (data) => {
 });
 
 chatSocket.on('tiktok-event', (data) => {
-    appendTikTokComment(data);
+    data.eventData.timestamp = data.timestamp;
+    switch (data.eventType) {
+        case 'chat':
+            appendTikTokComment(data.eventData);
+            break;
+        default:
+            console.log('Unknown event type:', data.eventType);
+            break;
+    }
 });
 
 chatSocket.on('subConfirm', (subs) => {
@@ -30,10 +83,8 @@ chatSocket.on('subConfirm', (subs) => {
 });
 
 chatSocket.on('error', (msg) => {
-    console.error("ERROR MESS:", msg);
+    console.error('ERROR MESS:', msg);
 });
-
-
 
 
 let sendButton = document.querySelector('.comment-submit');
@@ -56,6 +107,7 @@ function hasCookie(name) {
 function isValid(str) {
     return /[^\s]/.test(str);
 }
+
 function setupCommentSection() {
     const commentSection = document.querySelector('.chat-container');
     let localTempDate = new Date();
@@ -63,15 +115,26 @@ function setupCommentSection() {
     let tempStamp = `${ String(localTempDate.getHours()).padStart(2, '0') }:${ String(localTempDate.getMinutes()).padStart(2, '0') }`;
     commentSection.innerHTML = `<div class="chat-message" data-isbot="false" data-iscommand="false"> <span class="timestamp">${ tempStamp }</span> <span class="author" style="color: #FF0000">JstJxel</span> <span class="message">Willkommen im Chat</span></div>`;
 }
+
+
 //
 function appendComment(comment) {
     let commentContainer = document.querySelector('.chat-container');
+
+    let shouldScroll = commentContainer.scrollTop + commentContainer.clientHeight + 50 >= commentContainer.scrollHeight;
+
     comment.timestamp = `${ String(comment.timestamp.getHours()).padStart(2, '0') }:${ String(comment.timestamp.getMinutes()).padStart(2, '0') }`;
     let elem = `<div class="twitch-message"> <span class="timestamp">${ comment.timestamp }</span> <span class="author" style="color: ${ comment.color }">${ escapeHtml(comment.author) }</span> <span class="message">${ escapeHtml(comment.message) }</span></div>`;
     commentContainer.innerHTML += elem;
+
+    if (shouldScroll) {
+        commentContainer.scrollTop = commentContainer.scrollHeight;
+    }
 }
 
 function appendTikTokComment(data) {
+
+    // console.log(data);
     // let eventData = {
     //     comment: data.comment,
     //     nickname: data.nickname,
@@ -84,9 +147,16 @@ function appendTikTokComment(data) {
 
     let commentContainer = document.querySelector('.chat-container');
 
+    // console.log(`${ commentContainer.scrollTop } + ${ commentContainer.clientHeight } (= ${ commentContainer.scrollTop + commentContainer.clientHeight } ) >= ${ commentContainer.scrollHeight }`);
+    let shouldScroll = commentContainer.scrollTop + commentContainer.clientHeight + 50 >= commentContainer.scrollHeight;
+
+    let tikTokLogo = document.createElement('img');
+    tikTokLogo.classList.add('tiktok-logo');
+    tikTokLogo.src = 'https://www.edigitalagency.com.au/wp-content/uploads/TikTok-icon-glyph.png';
+
     let timeStamp = document.createElement('span');
     timeStamp.classList.add('timestamp');
-    timeStamp.innerHTML = `${ data.timestamp.getHours() }:${ data.timestamp.getMinutes() }`;
+    timeStamp.innerHTML = `${ String(data.timestamp.getHours()).padStart(2, '0') }:${ String(data.timestamp.getMinutes()).padStart(2, '0') }`;
 
     let profilePicture = document.createElement('img');
     profilePicture.classList.add('profile-picture');
@@ -98,16 +168,21 @@ function appendTikTokComment(data) {
 
     let message = document.createElement('span');
     message.classList.add('message');
-    message.innerHTML = data.comment;
+    message.innerHTML = ' ' + data.comment;
 
     let elem = document.createElement('div');
     elem.classList.add('tiktok-message');
+    elem.appendChild(tikTokLogo)
     elem.appendChild(timeStamp);
     elem.appendChild(profilePicture);
     elem.appendChild(author);
     elem.appendChild(message);
 
     commentContainer.appendChild(elem);
+
+    if (shouldScroll) {
+        commentContainer.scrollTop = commentContainer.scrollHeight;
+    }
 }
 
 // setupCommentSection()
@@ -146,8 +221,6 @@ function appendTikTokComment(data) {
 // };
 
 
-console.log('CHECKKING..');
-//     if the url has a #access_token=... then we can assume that the user has logged in and we can save the token and then close the window
 if (window.location.hash) {
 
     let token = window.location.hash.split('&')[0].split('=')[1];
@@ -155,7 +228,6 @@ if (window.location.hash) {
     window.close();
 }
 
-console.log('DONE:');
 
 
 let chatBotClientId = '1c6rmxrqyx7wmn8g5hmdqyn08ks2gg';
@@ -165,15 +237,15 @@ async function getUserToken() {
     let redirect = window.location.origin;
     let url = `https://id.twitch.tv/oauth2/authorize?client_id=${ chatBotClientId }&redirect_uri=${ encodeURIComponent(redirect) }&response_type=token&scope=chat:read+chat:edit`;
 
-    await popupCenter({url, title: 'Login', w: 500, h: 500})
+    await popupCenter({ url, title: 'Login', w: 500, h: 500 });
 }
 
-updateCommentInputHeight()
+updateCommentInputHeight();
 
 async function getUserName(token) {
     const response = await fetch('https://api.twitch.tv/helix/users', {
         headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${ token }`,
             'Client-Id': chatBotClientId
         }
     });
@@ -183,38 +255,32 @@ async function getUserName(token) {
     return data.data[0].login;
 }
 
-let tmiClient
+let tmiClient;
 
 async function sendComment() {
-    if (!isValid(document.querySelector(".comment-input").value)) return;
+    if (!isValid(document.querySelector('.comment-input').value)) return;
     let message = document.querySelector('.comment-input').value;
-    console.log("MESSAGE:", message)
     document.querySelector('.comment-input').value = '';
     // Check if there is a cookie named "token"
-    console.log(listCookies())
     let token;
     let username;
     if (!hasCookie('token')) {
-        await getUserToken()
+        await getUserToken();
     }
     token = document.cookie.split(';').find((item) => item.trim().startsWith('token=')).split('=')[1];
 
     if (!hasCookie('username')) {
-        username = await getUserName(token)
+        username = await getUserName(token);
     }
     username = document.cookie.split(';').find((item) => item.trim().startsWith('username=')).split('=')[1];
 
-    console.log(token, username)
-    console.log(message)
     if (token && username) {
         if (!tmiClient) {
-            console.log("CREATING NEW TMI CLIENT")
-            tmiClient = await new TmiHandler(token, username, "jstjxel");
+            tmiClient = await new TmiHandler(token, username, 'jstjxel');
         }
 
-        console.log("SENDING:", message)
         await tmiClient.send(message);
-        updateCommentInputHeight()
+        updateCommentInputHeight();
     }
 }
 

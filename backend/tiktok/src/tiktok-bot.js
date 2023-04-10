@@ -154,6 +154,19 @@ export class TikTokChatBot {
             }
         });
 
+        // setInterval(() => {
+        //     let data = {
+        //         comment: "halli hallo ich bin eins wurst",
+        //         nickname: "eins Baum",
+        //         uniqueId: "einsBaum",
+        //         profilePictureUrl: "https://cdn.drawception.com/images/avatars/647493-B9E.png",
+        //         followRole: 0,
+        //         isModerator: false,
+        //         isSubscriber: false,
+        //     };
+        //     this.eventHandler("chat", data)
+        // }, 10000);
+
         this.ttLiveConn.on('member', (data) => {
             this.eventHandler('member', data);
         });
@@ -213,6 +226,7 @@ export class TikTokChatBot {
 
 
     eventHandler(eventType, data) {
+        console.log('THIS IS THE EVENT HANDLER', eventType, data);
 
         // let dataStructure = {
         //     eventType: "chat",

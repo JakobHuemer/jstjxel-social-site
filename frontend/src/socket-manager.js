@@ -37,6 +37,7 @@ export class SocketManager extends EventEmitter {
 
         this.socket.onmessage = function (event) {
             let msg = JSON.parse(event.data);
+            // console.log(msg)
             switch (msg.transport) {
                 case 'session_welcome':
                     socketManager.socket.send(JSON.stringify({ transport: 'sub', subs: socketManager.subs }));
@@ -50,7 +51,8 @@ export class SocketManager extends EventEmitter {
                 default:
                     let data = JSON.parse(event.data);
                     let d = data.data.timestamp.split(',');
-                    data.data.timestamp = new Date(d[0], d[1], d[2], d[3], d[4], d[5], d[6]);
+                    data.data.timestamp = new Date(Date.UTC(d[0], d[1], d[2], d[3], d[4], d[5], d[6]));
+                    console.log(d[0], d[1], d[2], d[3], d[4], d[5], d[6]);
                     socketManager.emit(data.transport, data.data);
                     break;
             }

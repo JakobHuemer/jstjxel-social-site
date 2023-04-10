@@ -10,9 +10,10 @@ export default defineConfig({
             input: {
                 main: root + '/index.html',
                 logs: root + '/dev/logs.html',
-                twitchoverlay: root + '/twitchacc/overlay.html',
+                twitchoverlay: root + '/stream-ass/overlay/overlay.html',
                 404: root + '/404/404.html',
-                linktree: root + '/linktree/linktree.html'
+                linktree: root + '/linktree/linktree.html',
+                popupChat: root + "/stream-ass/popup-chat/popup-chat.html"
             },
             external: [
                 /^node:.*/,
