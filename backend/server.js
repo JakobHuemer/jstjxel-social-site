@@ -70,8 +70,8 @@ const clientId = process.env.TWITCH_CLIENT_ID;
 const clientSecret = process.env.TWITCH_CLIENT_SECRET;
 const oauthToken = process.env.TWITCH_CLIENT_OAUTH_TOKEN;
 const clientUserName = process.env.TWITCH_CLIENT_USERNAME;
-const channel = 'jakkibot';
-// const channel = 'jstjxel';
+// const channel = 'jakkibot';
+const channel = 'jstjxel';
 
 export const twitchChatBot = new TwitchChatBot(
     clientId,
