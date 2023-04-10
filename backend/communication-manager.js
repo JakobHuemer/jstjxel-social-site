@@ -17,29 +17,32 @@ function logParser(msg) {
     localTimestamp = formatDate(localTimestamp);
     // msg.data.timestamp = formatDate(msg.data.timestamp);
 
-    msg.data.color = '#FFFFFF';
+    // msg.data.color = '#FFFFFF';
     switch (msg.data.type) {
         case 'log':
             console.log(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
-            msg.data.color = '#FFFFFF';
+            // msg.data.color = '#FFFFFF';
             break;
         case 'err':
             console.error(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
-            msg.data.color = '#FF0000';
+            // msg.data.color = '#FF0000';
             break;
         case 'inf':
             console.info(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
-            msg.data.color = '#00FF00';
+            // msg.data.color = '#00FF00';
             break;
         case 'wrn':
             console.warn(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
-            msg.data.color = '#FFFF00';
+            // msg.data.color = '#FFFF00';
+            break;
+        case 'dbg':
+            console.debug(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            // msg.data.color = '#00FFFF';
             break;
         default:
-            console.log('default');
+            // console.log('default');
             console.log(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
     }
-
     broadcast(JSON.stringify(msg));
 
 }
@@ -131,6 +134,17 @@ class CommunicationManager extends EventEmitter {
             };
             broadcast(JSON.stringify(sendData));
         });
+
+        // Twitch notifications
+        this.emitter.on("twitch-chat-notice", (data) => {
+            data.timestamp = toTimeString(data.timestamp);
+
+            let sendData = {
+                transport: 'twitch-chat-notice',
+                data: data
+            };
+            broadcast(JSON.stringify(sendData));
+        })
 
 
         let server = https.createServer(options);

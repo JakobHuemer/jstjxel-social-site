@@ -42,6 +42,25 @@ body {
 
   overflow: hidden;
 
+  .popup-chat {
+    box-sizing: content-box;
+    height: 1.5rem;
+    position: absolute;
+    top: .6rem;
+    right: .6rem;
+    filter: invert(1);
+    //background: rgba(0,0,0,.1);
+    padding: .4rem;
+    border-radius: .4rem;
+    cursor: pointer;
+    transition: fill-opacity .2s;
+
+    &:hover {
+      //background: rgba(0,0,0,.2);
+      fill-opacity: .5;
+    }
+  }
+
   .chat-container {
 
     scrollbar-color: red;
@@ -49,13 +68,35 @@ body {
     overflow-y: auto;
 
     width: 100%;
-    padding: 1rem;
+    //padding: 1rem;
 
     display: flex;
     flex-direction: column;
-    gap: .4rem;
+    //gap: .4rem;
+
+
+    .twitch-chat-notice {
+
+      background: rgba(255, 255, 255, .1);
+
+      padding: 1rem 1rem;
+
+      border-left: 3px solid #6441a5;
+
+      .bold {
+        font-weight: 700;
+        font-weight: 700;
+      }
+
+      .underlined {
+        text-decoration: underline;
+      }
+
+    }
+
 
     .twitch-message {
+      padding: .2rem 1rem;
       //background: rgba(100, 65, 165, .1);
       //border-radius: 1rem;
       //padding: .4rem;
@@ -63,6 +104,7 @@ body {
 
 
     .tiktok-message {
+      padding: .2rem 1rem .2rem 0;
 
       //background: rgba(102, 195, 201, .1);
       //border-radius: 1rem;
@@ -89,90 +131,6 @@ body {
     width: 100%;
     padding: .6rem;
 
-    .comment-input-wrapper {
-      box-sizing: border-box;
-
-      display: flex;
-      align-items: end;
-      gap: .2rem;
-
-      padding: .2rem .4rem .2rem .4rem;
-      background: #3d3d40;
-      border-radius: .4rem;
-      border: 2px solid transparent;
-      //width: max-content;
-      transition: background .1s, border .1s;
-      //border: 2px #3d3d40;
-
-      &:hover {
-        border: 2px solid #303033;
-      }
-
-      &:focus-within {
-        border: 2px solid #6441a5;
-        background: black;
-      }
-
-
-      .comment-input {
-        box-sizing: content-box;
-        padding: .2rem 0;
-        //max-height: calc(1.08rem * 5);
-        //overflow-y: scroll;
-
-        font-family: Inter, serif;
-        font-size: .9rem;
-        //padding-right: 4rem;
-        background: none;
-        //background: rgba(255, 255, 255, .2);
-        resize: none;
-        border: none;
-        //width: 80%;
-        flex: 1;
-        margin: 0;
-        height: 1.08rem;
-        line-height: 1.2;
-
-        &:focus {
-          outline: none;
-        }
-
-      }
-
-
-      .comment-submit {
-        transition: background-size .2s;
-        background: url("../../assets/svg/paperplane.svg") no-repeat center center/ 50% ;
-        cursor: pointer;
-        //background: rgba(0,0,0,.3);
-        filter: invert(1);
-
-        position: relative;
-        box-sizing: border-box;
-        outline: none;
-        border: none;
-        border-radius: 0;
-        width: 10%;
-        height: calc(1.08rem + .4rem);
-
-        &:hover {
-          background: url("../../assets/svg/paperplane.svg") no-repeat center center/ 55% ;
-        }
-
-        &:active {
-          background: url("../../assets/svg/paperplane.svg") no-repeat center center/ 45% ;
-
-        }
-
-        &:focus {
-          outline: none;
-        }
-
-      }
-
-    }
-
-
   }
 
 
@@ -195,5 +153,6 @@ body {
       color: white;
     }
   }
+
 
 }

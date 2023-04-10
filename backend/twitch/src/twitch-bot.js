@@ -1,10 +1,11 @@
-import WebSocket, { WebSocketServer } from 'ws';
 import { EventEmitter } from 'events';
 import { SiteSocket } from '../../site-socket.js';
 import { Logger } from '../../logger.js';
 import { parseMessage } from './irc-message-parser.js';
+import { parseNotice } from '../../chat-assets.js';
 import axios from 'axios';
 import pkg from 'websocket';
+
 const { client: WebSocketClient } = pkg;
 
 function authenticate(twitchBot) {
@@ -25,6 +26,18 @@ function ping(conn, printer, interval = 60000, step = 5, name = '') {
 }
 
 
+function extractText(notice) {
+    let elements = notice.length;
+    let text = '';
+
+    for (let i = 0; i < elements - 1; i++) {
+        text += notice[i].text + ' ';
+    }
+    text += notice[elements - 1].text;
+
+    return text;
+}
+
 export class TwitchChatBot extends EventEmitter {
     constructor(client_id, client_secret, oathToken, username, channel) {
         super();
@@ -36,34 +49,69 @@ export class TwitchChatBot extends EventEmitter {
         this.channel = channel;
         this.chatSocket = new WebSocketClient();
 
+        this.status = false;
+
         this.messageServer = new SiteSocket('twitch-message');
+        this.chatNoticeServer = new SiteSocket('twitch-chat-notice');
     }
 
     async send(message) {
-        this.chatSocket.send('PRIVMSG #' + this.channel + ' :' + message);
+        // this.chatSocket.send('PRIVMSG #' + this.channel + ' :' + message);
+        this.sendTwitchMessage(message);
+        this.sendSocketMessage(message);
+    }
+
+    async sendTwitchMessage(message) {
+        this.chatSocketConnection.sendUTF('PRIVMSG #' + this.channel + ' :' + message);
+    }
+
+    async sendSocketMessage(message) {
         let parsedMessage = {
             parameters: message,
             tags: {
                 'display-name': this.username,
                 color: '#FF0000'
-            },
+            }
         };
+
+        await this.messageServer.send(parsedMessage);
     }
 
-    async listen() {
+    sendChatNotice(notice, onlyWebsiteChat = false /*twitch or tiktok*/) {
+
+        // notice data should be: object, where every word has some type of importance which then gets decoded by the frontend with color boldness etc.
+        // example: [{ "text": "Hello", "type": "normal" }, { "text": "World", "type": "bold" }]
+        let data = {
+            comments: notice,
+        };
+
+        let plainText = extractText(notice);
+
+        this.chatNoticeServer.send(data);
+
+        if (!onlyWebsiteChat) {
+            this.sendTwitchMessage(plainText);
+        }
+
+    }
+
+    async connect() {
 
         this.chatSocket.on('connect', async (conn) => {
-            this.chatSocketConnection = conn
+
+            this.status = true;
+
+            this.chatSocketConnection = conn;
             await authenticate(this);
             await this.chatSocketConnection.sendUTF(`JOIN #${ this.channel }`);
             await messageHandler(this);
 
             this.chatSocketConnection.on('error', (error) => {
-                this.logger.logErr(error, 'connection');
+                this.logger.error(error, 'connection');
             });
 
             this.chatSocketConnection.on('close', () => {
-                this.logger.logWrn('Connection closed', 'connection');
+                this.logger.warn('Connection closed', 'connection');
             });
 
             ping(this.chatSocketConnection, this.logger, 60000, 1, 'Twitch IRC');
@@ -73,8 +121,14 @@ export class TwitchChatBot extends EventEmitter {
 
     }
 
+    async disconnect() {
+        if (this.status) {
+            this.chatSocketConnection.close();
+            this.status.connected = false;
+        }
+    }
+
     async getBearerToken() {
-        this.logger.logInf('Fetching Bearer Token . . .', 'Bearer');
         const res = await axios.post(
             'https://id.twitch.tv/oauth2/token',
             new URLSearchParams({
@@ -83,7 +137,6 @@ export class TwitchChatBot extends EventEmitter {
                 'grant_type': 'client_credentials'
             })
         );
-        this.logger.logInf('Returning Bearer Token . . .', 'Bearer');
 
         return res.data.access_token;
     }
@@ -93,7 +146,7 @@ function messageHandler(twitchChatBot) {
     twitchChatBot.chatSocketConnection.on('message', (ircMessage) => {
 
         // twitchChatBot.logger.log("Message received: " + ircMessage, 'MESSAGE');
-        if ( ircMessage.type === 'utf8') {
+        if (ircMessage.type === 'utf8') {
 
             let rawIrcMessage = ircMessage.utf8Data.trimEnd();
 
@@ -107,6 +160,7 @@ function messageHandler(twitchChatBot) {
 
                 if (parsedMessage) {
 
+                    // twitchChatBot.logger.debug(JSON.stringify(parsedMessage, null, 2), 'MESSAGE DEBUG');
                     // console.log(parsedMessage);
 
                     switch (parsedMessage.command.command) {
@@ -138,9 +192,9 @@ function messageHandler(twitchChatBot) {
                             //                 // console.log(`COMMAND (${new Date().toISOString()}):`, commandObj.name.toUpperCase());
                             //                 twitchChatBot.logger.log(`COMMAND:`, commandObj.label.toUpperCase());
                             //                 commandObj.execute(parsedMessage, twitchChatBot);
-                            //             } catch (err) {
-                            //                 console.log('ERR:', err);
-                            //                 // pLog("ERR: " + err, "ERR");
+                            //             } catch (error) {
+                            //                 console.log('ERR:', error);
+                            //                 // pLog("ERR: " + error, "ERR");
                             //                 // twitchChatBot.webSocketTwitchClientConnection.sendUTF(`@reply-parent-msg=${ parsedMessage.tags.id } PRIVMSG ${ channel } :Ups, something went wrong`);
                             //             }
                             //
@@ -174,7 +228,7 @@ function messageHandler(twitchChatBot) {
                             // pLog('The channel must have banned (/ban) the bot.', 'TWITCH');
                             // console.log(parsedMessage)
                             if (parsedMessage.source.nick === twitchChatBot.username) {
-                                twitchChatBot.logger.logWrn('The channel must have banned (/ban) the bot.', 'TWITCH');
+                                twitchChatBot.logger.warn('The channel must have banned (/ban) the bot.', 'TWITCH');
                             }
                             break;
                         case
@@ -188,7 +242,7 @@ function messageHandler(twitchChatBot) {
                                 twitchChatBot.chatSocket(`PART ${ channel }`);
                             } else if ('You don’t have permission to perform that action' === parsedMessage.parameters) {
                                 // console.log(`No permission. Check if the access token is still valid. Left ${channel}`);
-                                twitchChatBot.logger.logWrn(`No permission. Check if the access token is still valid. Left ${ channel }`, 'TWITCH');
+                                twitchChatBot.logger.warn(`No permission. Check if the access token is still valid. Left ${ channel }`, 'TWITCH');
                                 twitchChatBot.send(`PART ${ channel }`);
                             }
                             break;

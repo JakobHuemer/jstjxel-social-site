@@ -24,6 +24,10 @@ export class TmiHandler {
         this.client.on('connected', () => {
             this.connected = true;
         });
+
+        this.client.on('disconnected', () => {
+            this.connected = false;
+        });
     }
 
     async send(msg) {

@@ -70,10 +70,10 @@ const clientId = process.env.TWITCH_CLIENT_ID;
 const clientSecret = process.env.TWITCH_CLIENT_SECRET;
 const oauthToken = process.env.TWITCH_CLIENT_OAUTH_TOKEN;
 const clientUserName = process.env.TWITCH_CLIENT_USERNAME;
-// const channel = 'jakkibot';
-const channel = 'jstjxel';
+const channel = 'jakkibot';
+// const channel = 'jstjxel';
 
-const twitchChatBot = new TwitchChatBot(
+export const twitchChatBot = new TwitchChatBot(
     clientId,
     clientSecret,
     oauthToken,
@@ -81,7 +81,7 @@ const twitchChatBot = new TwitchChatBot(
     channel
 );
 
-twitchChatBot.listen();
+twitchChatBot.connect();
 
 // TWITCH EVENTSUB -------------------------------------------------------------------------
 
@@ -106,3 +106,10 @@ import { TikTokChatBot } from './tiktok/src/tiktok-bot.js';
 const tiktokChatBot = new TikTokChatBot('jstjxel', process.env.TIKTOK_CLIENT_SESSION_ID);
 
 tiktokChatBot.connect();
+
+
+// debug tests
+
+// setInterval(() => {
+//     httpLogger.debug('debug test', 'debug test');
+// }, 1000);

@@ -50,6 +50,7 @@ export class SocketManager extends EventEmitter {
                     break;
                 default:
                     let data = JSON.parse(event.data);
+                    console.log(data);
                     let d = data.data.timestamp.split(',');
                     data.data.timestamp = new Date(Date.UTC(d[0], d[1], d[2], d[3], d[4], d[5], d[6]));
                     console.log(d[0], d[1], d[2], d[3], d[4], d[5], d[6]);

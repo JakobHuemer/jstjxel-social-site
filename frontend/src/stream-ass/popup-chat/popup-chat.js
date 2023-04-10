@@ -3,7 +3,7 @@ import "./popup-chat.scss"
 import { SocketManager } from '../../socket-manager';
 import escapeHtml from 'escape-html';
 
-let chatSocket = new SocketManager(['twitch-message',"tiktok-event"]);
+let chatSocket = new SocketManager(['twitch-message',"tiktok-event", "twitch-chat-notice"]);
 
 chatSocket.on('twitch-message', (data) => {
     appendComment(data)
@@ -19,6 +19,25 @@ chatSocket.on('tiktok-event', (data) => {
             console.log('Unknown event type:', data.eventType);
             break;
     }
+});
+
+chatSocket.on('twitch-chat-notice', (data) => {
+    let sampleData = [
+        {
+            text: 'hallo',
+            bold: true,
+            underlined: true,
+            color: '#FF0000'
+        },
+        {
+            text: 'welt',
+            bold: false,
+            underlined: false,
+            color: '#00FF00'
+        }
+    ];
+
+    createNoticeContent(data);
 });
 
 
@@ -88,3 +107,75 @@ function appendTikTokComment(data) {
         commentContainer.scrollTop = commentContainer.scrollHeight;
     }
 }
+
+function createNoticeContent(data) {
+    let chatContainer = document.querySelector('.chat-container');
+
+    let notice = document.createElement('div');
+    notice.classList.add('twitch-chat-notice');
+
+    for (let i = 0; i < data.length; i++) {
+        const wordItem = data[i];
+        let word = document.createElement('span');
+        word.textContent = wordItem.text;
+        word.style.color = wordItem.color;
+        if (wordItem.bold) word.classList.add('bold');
+        if (wordItem.underlined) word.classList.add('underlined');
+
+        let spacing = document.createElement('span');
+        spacing.innerHTML = ' ';
+
+        if (i !== data.length) notice.appendChild(spacing);
+        notice.appendChild(word);
+    }
+
+    chatContainer.appendChild(notice);
+}
+
+
+// -------------------------------------
+// setInterval(() => {
+//     // let eventData = {
+//     //     comment: data.comment,
+//     //     nickname: data.nickname,
+//     //     uniqueId: data.uniqueId,
+//     //     profilePictureUrl: data.profilePictureUrl,
+//     //     followRole: data.followRole,
+//     //     isModerator: data.isModerato
+//     //     isSubscriber: data.isSubscriber,
+//     // };
+//
+//     let eventData = {
+//         comment: 'lorem ipsum dolor sit amet',
+//         nickname: 'jakkki_',
+//         uniqueId: 'jakkki_',
+//         profilePictureUrl: 'https://i.seadn.io/gae/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc?auto=format&w=1000',
+//         followRole: 0,
+//         isModerator: false,
+//         isSubscriber: false,
+//         timestamp: new Date()
+//     }
+//
+//     appendTikTokComment(eventData)
+// }, 4000)
+//
+//
+// setInterval(() => {
+//     let data = [
+//         { text: 'jakkibot', bold: true, underlined: false, color: '#6441a5' },
+//         { text: 'hat', bold: false, underlined: false, color: '#FFFFFF' },
+//         { text: 'einen', bold: false, underlined: false, color: '#FFFFFF' },
+//         { text: 'tier', bold: true, underlined: false, color: '#FFFFFF' },
+//         { text: '2', bold: true, underlined: false, color: '#FFFFFF' },
+//         { text: 'sub', bold: false, underlined: true, color: '#FFFFFF' },
+//         {
+//             text: 'gedropped',
+//             bold: false,
+//             underlined: false,
+//             color: '#FFFFFF'
+//         }
+//     ];
+//
+//
+//     createNoticeContent(data);
+// }, 5000);

@@ -13,9 +13,11 @@ export class TikTokChatBot {
 
         this.options = {
             enableExtendedGiftInfo: true,
-            fetchRoomInfoOnConnect: false,
-            sessionId: this.sessionId
+            sessionId: this.sessionId,
+            // fetchRoomInfoOnConnect: false,
         };
+
+        this.status = false;
 
         this.ttLiveConn = new WebcastPushConnection(this.tiktokUsername, this.options);
 
@@ -23,17 +25,32 @@ export class TikTokChatBot {
     }
 
     connect() {
-        this.ttLiveConn.connect().then((state) => {
-            state = this.ttLiveConn.getState();
-            this.ttLogger.logInf(`Connected to roomId ${ state.roomId }`, 'connection');
-        }).catch((err) => {
-            this.ttLogger.logErr('Failed to connect', 'connection');
-        });
+        // this.ttLiveConn.connect().then((state) => {
+        //     state = this.ttLiveConn.getState();
+        //     this.ttLogger.info(`Connected to roomId ${ state.roomId }`, 'connection');
+        // }).catch((err) => {
+        //     this.ttLogger.error('Failed to connect', 'connection');
+        // });
 
         this.ttLiveConn.on('disconnected', (data) => {
-            this.ttLogger.logWrn('Disconnected', 'connection');
+            this.ttLogger.warn('Disconnected', 'connection');
+            this.status = false;
         });
 
+        this.ttLiveConn.on('error', (err) => {
+            console.log(err);
+            this.status = false;
+            // this.ttLogger.error(err, 'stream');
+        });
+
+        this.ttLiveConn.on('connected', () => {
+            this.ttLogger.info('Connected to stream', 'stream');
+            this.status = true;
+        });
+
+        this.ttLiveConn.on('rawData', (messageTypeName, binary) => {
+            console.log('THIS IS THE rawData EVEnt from TIKTOK LIVE CONNECTION:', messageTypeName, binary);
+        });
 
         /*
         * Events:
@@ -143,13 +160,13 @@ export class TikTokChatBot {
         this.ttLiveConn.on('streamEnd', (actionId) => {
             switch (actionId) {
                 case 3:
-                    this.ttLogger.logInf('Stream ended', 'stream');
+                    this.ttLogger.info('Stream ended', 'stream');
                     break;
                 case 4:
-                    this.ttLogger.logInf('Stream ended by platform moderator (ban)', 'stream');
+                    this.ttLogger.info('Stream ended by platform moderator (ban)', 'stream');
                     break;
                 default:
-                    this.ttLogger.logInf('Stream ended by unknown reason', 'stream');
+                    this.ttLogger.info('Stream ended by unknown reason', 'stream');
                     break;
             }
         });
@@ -206,22 +223,6 @@ export class TikTokChatBot {
         this.ttLiveConn.on('subscribe', (data) => {
             this.eventHandler('subscribe', data);
         });
-
-        this.ttLiveConn.on('error', (err) => {
-            this.ttLogger.logErr(err, 'stream');
-        });
-
-        this.ttLiveConn.on('connected', () => {
-            this.ttLogger.logInf('Connected to stream', 'stream');
-        });
-
-        this.ttLiveConn.on('disconnected', () => {
-            this.ttLogger.logInf('Disconnected from stream', 'stream');
-        });
-
-        this.ttLiveConn.on('rawData', (messageTypeName, binary) => {
-            console.log("THIS IS THE rawData EVEnt from TIKTOK LIVE CONNECTION:", messageTypeName, binary);
-        })
     }
 
 

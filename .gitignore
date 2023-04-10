@@ -5,3 +5,4 @@ node_modules/
 ssl/
 certificate-options.js
 https-middleware.js
+test.js

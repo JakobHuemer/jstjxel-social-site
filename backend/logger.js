@@ -14,48 +14,65 @@ export class Logger {
             protocol: this.PROTOCOL,
             subProtocol: subProtocol.replace(/\s+/g, '-').toUpperCase(),
             type: 'log',
-            timestamp: new Date()
+            timestamp: new Date(),
+            color: "#ffffff"
             // timestamp: new Date().toUTCString().replace(' GMT', `.${ currDate.getUTCMilliseconds() } GMT`),
 
         };
         communicationManager.emitter.emit('log', data);
     }
 
-    logErr(message, subProtocol) {
+    error(message, subProtocol) {
         let currDate = new Date();
         let data = {
             message: message,
             protocol: this.PROTOCOL,
             subProtocol: subProtocol.replace(/\s+/g, '-').toUpperCase(),
-            type: 'err',
-            timestamp: currDate
+            type: 'error',
+            timestamp: currDate,
+            color: "#ff0000"
 
         };
         communicationManager.emitter.emit('log', data);
     }
 
-    logInf(message, subProtocol) {
+    info(message, subProtocol) {
         let data = {
             message: message,
             protocol: this.PROTOCOL,
             subProtocol: subProtocol.replace(/\s+/g, '-').toUpperCase(),
-            type: 'inf',
-            timestamp: new Date()
+            type: 'info',
+            timestamp: new Date(),
+            color: "#00ff00"
 
         };
         communicationManager.emitter.emit('log', data);
     }
 
-    logWrn(message, subProtocol) {
+    warn(message, subProtocol) {
         let data = {
             message: message,
             protocol: this.PROTOCOL,
             subProtocol: subProtocol.replace(/\s+/g, '-').toUpperCase(),
-            type: 'wrn',
-            timestamp: new Date()
+            type: 'warn',
+            timestamp: new Date(),
+            color: "#ffcc00"
 
         };
         communicationManager.emitter.emit('log', data);
+    }
+
+    debug(message, subProtocol) {
+        let data = {
+            message: message,
+            protocol: this.PROTOCOL,
+            subProtocol: subProtocol.replace(/\s+/g, '-').toUpperCase(),
+            type: 'dbg',
+            timestamp: new Date(),
+            color: "#22e3ff"
+        }
+
+        communicationManager.emitter.emit("log", data)
     }
 }
 

@@ -8,31 +8,31 @@ if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navig
     // Not mobile
     let chatContainer = document.querySelector('.chat');
 
-    let popUpString = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d=\"M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z\"/></svg>"
+    let popUpString = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg>';
 
     const parser = new DOMParser();
     const svgDoc = parser.parseFromString(popUpString, 'image/svg+xml');
     let popUpChat = svgDoc.querySelector('svg');
     popUpChat.classList.add('popup-chat');
 
-    chatContainer.appendChild(popUpChat)
+    chatContainer.appendChild(popUpChat);
 
     popUpChat.addEventListener('click', () => {
-        let chatUrl = "https://" + window.location.hostname + "/stream/chat"
-        let title = "Chat"
+        let chatUrl = 'https://' + window.location.hostname + '/stream/chat';
+        let title = 'Chat';
 
-        let w = 350
+        let w = 350;
 
         // Fixes dual-screen position                             Most browsers      Firefox
         const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
         const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
 
-        const width = 350
+        const width = 350;
         const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
 
         const systemZoom = width / window.screen.availWidth;
         const left = (width - w) / 2 / systemZoom + dualScreenLeft;
-        const top = 0
+        const top = 0;
         const newWindow = window.open(chatUrl, title,
             `
         scrollbars=yes,
@@ -49,10 +49,11 @@ if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navig
 
 }
 
+
 // let ws = new WebSocket('ws://' + BASE_IP + ':4444')
 let url = 'wss://' + window.location.hostname + ':4444';
 
-let chatSocket = new SocketManager(['twitch-message', 'tiktok-event']);
+let chatSocket = new SocketManager(['twitch-message', 'tiktok-event', 'twitch-chat-notice']);
 
 chatSocket.on('connect', () => {
     console.log('Connected to chat server');
@@ -77,6 +78,99 @@ chatSocket.on('tiktok-event', (data) => {
             break;
     }
 });
+
+chatSocket.on('twitch-chat-notice', (data) => {
+    // let sampleData = [
+    //     {
+    //         text: 'hallo',
+    //         bold: true,
+    //         underlined: true,
+    //         color: '#FF0000'
+    //     },
+    //     {
+    //         text: 'welt',
+    //         bold: false,
+    //         underlined: false,
+    //         color: '#00FF00'
+    //     }
+    // ];
+
+    createNoticeContent(data.comments);
+});
+
+
+
+// setInterval(() => {
+//     let data = [
+//         { text: 'jakkibot', bold: true, underlined: false, color: '#6441a5' },
+//         { text: 'hat', bold: false, underlined: false, color: '#FFFFFF' },
+//         { text: 'einen', bold: false, underlined: false, color: '#FFFFFF' },
+//         { text: 'tier', bold: true, underlined: false, color: '#FFFFFF' },
+//         { text: '2', bold: true, underlined: false, color: '#FFFFFF' },
+//         { text: 'sub', bold: false, underlined: true, color: '#FFFFFF' },
+//         {
+//             text: 'gedropped',
+//             bold: false,
+//             underlined: false,
+//             color: '#FFFFFF'
+//         }
+//     ];
+//
+//
+//     createNoticeContent(data);
+// }, 5000);
+//
+//
+// setInterval(() => {
+//     // let eventData = {
+//     //     comment: data.comment,
+//     //     nickname: data.nickname,
+//     //     uniqueId: data.uniqueId,
+//     //     profilePictureUrl: data.profilePictureUrl,
+//     //     followRole: data.followRole,
+//     //     isModerator: data.isModerato
+//     //     isSubscriber: data.isSubscriber,
+//     // };
+//
+//     let eventData = {
+//         comment: 'lorem ipsum dolor sit amet',
+//         nickname: 'jakkki_',
+//         uniqueId: 'jakkki_',
+//         profilePictureUrl: 'https://i.seadn.io/gae/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc?auto=format&w=1000',
+//         followRole: 0,
+//         isModerator: false,
+//         isSubscriber: false,
+//         timestamp: new Date()
+//     }
+//
+//     appendTikTokComment(eventData)
+// }, 4000)
+
+function createNoticeContent(data) {
+    let chatContainer = document.querySelector('.chat-container');
+
+    let notice = document.createElement('div');
+    notice.classList.add('twitch-chat-notice');
+
+    for (let i = 0; i < data.length; i++) {
+        const wordItem = data[i];
+        let word = document.createElement('span');
+        word.textContent = wordItem.text;
+        word.style.color = wordItem.color;
+        if (wordItem.bold) word.classList.add('bold');
+        if (wordItem.underlined) word.classList.add('underlined');
+
+        let spacing = document.createElement('span');
+        spacing.innerHTML = ' ';
+
+        if (i !== data.length) notice.appendChild(spacing);
+        notice.appendChild(word);
+    }
+
+    chatContainer.appendChild(notice);
+}
+
+
 
 chatSocket.on('subConfirm', (subs) => {
     console.log('Subscribed to topics: ' + subs);
@@ -141,7 +235,7 @@ function appendTikTokComment(data) {
     //     uniqueId: data.uniqueId,
     //     profilePictureUrl: data.profilePictureUrl,
     //     followRole: data.followRole,
-    //     isModerator: data.isModerator,
+    //     isModerator: data.isModerato
     //     isSubscriber: data.isSubscriber,
     // };
 
@@ -172,7 +266,7 @@ function appendTikTokComment(data) {
 
     let elem = document.createElement('div');
     elem.classList.add('tiktok-message');
-    elem.appendChild(tikTokLogo)
+    elem.appendChild(tikTokLogo);
     elem.appendChild(timeStamp);
     elem.appendChild(profilePicture);
     elem.appendChild(author);
@@ -229,7 +323,6 @@ if (window.location.hash) {
 }
 
 
-
 let chatBotClientId = '1c6rmxrqyx7wmn8g5hmdqyn08ks2gg';
 
 
@@ -256,6 +349,25 @@ async function getUserName(token) {
 }
 
 let tmiClient;
+
+let inputBox = document.querySelector('.comment-input');
+inputBox.addEventListener('focus', async () => {
+    if (!tmiClient && hasCookie('token') && hasCookie('username')) {
+        let token = document.cookie.split(';').find((item) => item.trim().startsWith('token=')).split('=')[1];
+        let username = document.cookie.split(';').find((item) => item.trim().startsWith('username=')).split('=')[1];
+        tmiClient = await new TmiHandler(token, username, 'jstjxel');
+    }
+
+    if (!hasCookie('token')) {
+        await getUserToken();
+    }
+
+    let token = document.cookie.split(';').find((item) => item.trim().startsWith('token=')).split('=')[1];
+
+    if (!hasCookie('username')) {
+        await getUserName(token);
+    }
+});
 
 async function sendComment() {
     if (!isValid(document.querySelector('.comment-input').value)) return;
