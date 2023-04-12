@@ -44,6 +44,10 @@ webApp.get('/stream/overlay', hasSharedSecret, (req, res) => {
     res.sendFile('./stream-ass/overlay/overlay.html', { root: './frontend/dist/' });
 });
 
+webApp.get('/stream-ass/overlay/overlay.html', hasSharedSecret, (req, res) => {
+    res.sendFile('./stream-ass/overlay/overlay.html', { root: './frontend/dist/' });
+});
+
 webApp.get('/stream/chat', (req, res) => {
     res.sendFile('./stream-ass/popup-chat/popup-chat.html', { root: './frontend/dist/' });
 });

@@ -5,6 +5,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "dev": "echo \"Error: please run from root\" && exit 1",
+    "start": "echo \"Error: please run from root\" && exit 1"
   },
   "author": "jakkki_",
   "license": "ISC",
@@ -12,7 +14,6 @@
     "axios": "^1.3.5",
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
-    "http": "^0.0.1-security",
     "https": "^1.0.0",
     "tiktok-live-connector": "^1.0.3",
     "ws": "^8.13.0"

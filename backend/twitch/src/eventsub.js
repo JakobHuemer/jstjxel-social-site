@@ -163,7 +163,7 @@ export class TwitchEventSub {
                         break;
                     case 'session_reconnect':
                         this.eventLogger.warn('Reconnecting', 'connection');
-                        this.eventSocket.close();
+                        this.eventSocketConnection.close();
                         this.eventSocket.connect('wss://eventsub-beta.wss.twitch.tv/ws');
                         break;
                     case 'revocation':
