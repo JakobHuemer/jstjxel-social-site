@@ -6,14 +6,15 @@ import escapeHtml from 'escape-html';
 
 
 // let url = 'ws://' + window.location.hostname + ":" + WEBSOCKET_PORT;
-let url = 'wss://' + window.location.hostname + ':4444'
+let url = 'wss://' + window.location.hostname + ':4444';
 
 const logContainer = document.querySelector('.log-container');
 
 
 // implememtation of the new socketManager
 import { SocketManager } from '../socket-manager';
-let logSocket = new SocketManager(['log']);
+
+let logSocket = new SocketManager(['log', 'log-cache']);
 
 logSocket.on('connect', () => {
     console.log('Connected to log server');
@@ -28,6 +29,15 @@ logSocket.on('log', (data) => {
     addLogEntry(data.timestamp, data.protocol, data.subProtocol, data.message, data.color);
 });
 
+logSocket.on('log-cache', (data) => {
+    console.log('receiving logCache from Server at time:', data.timestamp);
+    let logCache = data.logs;
+    logCache.forEach((logEntry) => {
+        logEntry.timestamp = formatDate(logEntry.timestamp);
+        addLogEntry(logEntry.timestamp, logEntry.protocol, logEntry.subProtocol, logEntry.message, logEntry.color);
+    });
+});
+
 const formatDate = (date) => `${ date.getFullYear() }-` +
     `${ (date.getMonth() + 1).toString().padStart(2, '0') }-` +
     `${ date.getDate().toString().padStart(2, '0') } ` +
@@ -40,10 +50,9 @@ logSocket.on('subConfirm', (subs) => {
     console.log('Subscribed to topics: ' + subs);
 });
 
-logSocket.on("error", (msg) => {
+logSocket.on('error', (msg) => {
     console.error(msg);
-})
-
+});
 
 
 let ifGoingToScroll = false;

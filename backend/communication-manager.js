@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import https from 'https';
 import { options } from './certificate-options.js';
 
+
 let broadcast = (data) => {
     // console.log('default broadcast');
     // nothing happens because no websocketClient is connected
@@ -76,6 +77,8 @@ class CommunicationManager extends EventEmitter {
 
         this.clientSubscriptions = new Map();
 
+        this.logCache = [];
+
         // OPTIONS VARIABLE
         this.subOptions = [
             'twitch-message',
@@ -92,6 +95,8 @@ class CommunicationManager extends EventEmitter {
                 transport: 'log',
                 data: data
             };
+
+            this.logCache.push(msg);
 
             // msg.data.timestamp = new Date(msg.data.timestamp);
             // msg.data.timestamp = getDate(msg.data.timestamp);
@@ -161,18 +166,26 @@ class CommunicationManager extends EventEmitter {
                 switch (msg.transport) {
                     case 'sub':
                         if (!msg.subs) return ws.send(JSON.stringify({ transport: 'error', message: 'No subs' }));
-                        if (!this.clientSubscriptions.has(ws)) {
-                            const subs = new Set(msg.subs);
-                            this.clientSubscriptions.set(ws, subs);
-                            ws.send(JSON.stringify({ transport: 'subConfirm', subs: msg.subs }));
-                        } else {
-                            let subFlags = this.clientSubscriptions.get(ws);
-                            for (const sub of msg.subs) {
-                                subFlags.add(sub);
+
+                        const subs = new Set(msg.subs);
+                        this.clientSubscriptions.set(ws, subs);
+                        ws.send(JSON.stringify({ transport: 'subConfirm', subs: msg.subs }));
+
+                        // send cached logs if subscribed to logCache
+                        let timeStamp = toTimeString(new Date())
+
+                        if (subs.has('log-cache')) {
+                            let data = {
+                                transport: 'log-cache',
+                                data: {
+                                    timestamp: timeStamp,
+                                    logs: this.logCache
+                                }
                             }
-                            this.clientSubscriptions.set(ws, subFlags);
-                            ws.send(JSON.stringify({ transport: 'subConfirm', subs: msg.subs }));
+                            ws.send(JSON.stringify(data));
                         }
+
+
                         break;
                     case 'unsub':
                         let subFlags = this.clientSubscriptions.get(ws);

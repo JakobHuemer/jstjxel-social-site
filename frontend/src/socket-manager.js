@@ -9,7 +9,7 @@ export class SocketManager extends EventEmitter {
         this.socket = new WebSocket(this.url);
 
         this.connect(this).then(() => {
-            this.emit('connect', "Connected to server");
+            this.emit('connect', 'Connected to server');
         });
     }
 
@@ -21,8 +21,7 @@ export class SocketManager extends EventEmitter {
         this.socket.onclose = function (event) {
             setTimeout(async function () {
                 // connect();
-                socketManager.emit('reconnect');
-                socketManager.socket.connect();
+                socketManager.reconnect(socketManager)
             }, 1000);
         };
 
@@ -50,14 +49,38 @@ export class SocketManager extends EventEmitter {
                     break;
                 default:
                     let data = JSON.parse(event.data);
-                    console.log(data);
-                    let d = data.data.timestamp.split(',');
-                    data.data.timestamp = new Date(Date.UTC(d[0], d[1], d[2], d[3], d[4], d[5], d[6]));
-                    console.log(d[0], d[1], d[2], d[3], d[4], d[5], d[6]);
-                    socketManager.emit(data.transport, data.data);
+                    // console.log(data);
+
+                    // if transport is log-cache, emit for every single log
+                    if (data.transport === 'log-cache') {
+                        let logCache = data.data.logs;
+
+                        logCache.forEach((logEntry) => {
+                            let d = logEntry.data.timestamp.split(',');
+                            logEntry.data.timestamp = new Date(Date.UTC(d[0], d[1], d[2], d[3], d[4], d[5], d[6]));
+                            socketManager.emit("log", logEntry.data);
+                            // console.log(logEntry)
+                        });
+                    } else {
+                        let d = data.data.timestamp.split(',');
+                        data.data.timestamp = new Date(Date.UTC(d[0], d[1], d[2], d[3], d[4], d[5], d[6]));
+                        // console.log(d[0], d[1], d[2], d[3], d[4], d[5], d[6]);
+                        socketManager.emit(data.transport, data.data);
+                    }
                     break;
+
             }
         };
+    }
+
+    async reconnect(socketManager) {
+        setTimeout(async function () {
+            // connect();
+            console.log('Reconnecting...');
+            socketManager.emit('reconnect', 'Reconnecting...');
+            socketManager.socket = new WebSocket(socketManager.url);
+            socketManager.connect(socketManager);
+        }, 1000);
     }
 }
 
