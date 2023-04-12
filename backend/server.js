@@ -89,18 +89,18 @@ twitchChatBot.connect();
 
 // TWITCH EVENTSUB -------------------------------------------------------------------------
 
-// import { TwitchEventSub } from './twitch/src/eventsub.js';
-//
-// const userName = 'jstjxel';
-// const userAccessToken = process.env.TWITCH_USER_ACCESS_TOKEN_JIXEL;
-//
-// const twitchEventSub = new TwitchEventSub(
-//     'jstjxel',
-//     clientId,
-//     clientSecret,
-//     userAccessToken
-// );
-// twitchEventSub.listen();
+import { TwitchEventSub } from './twitch/src/eventsub.js';
+
+const userName = 'jstjxel';
+const userAccessToken = process.env.TWITCH_USER_ACCESS_TOKEN_JIXEL;
+
+const twitchEventSub = new TwitchEventSub(
+    'jstjxel',
+    clientId,
+    clientSecret,
+    userAccessToken
+);
+twitchEventSub.listen();
 
 // TikTok Chat Bot -------------------------------------------------------------------------
 
