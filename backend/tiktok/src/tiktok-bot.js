@@ -14,7 +14,7 @@ export class TikTokChatBot {
         this.options = {
             enableExtendedGiftInfo: true,
             sessionId: this.sessionId,
-            // fetchRoomInfoOnConnect: false,
+            fetchRoomInfoOnConnect: false,
         };
 
         this.status = false;
@@ -25,12 +25,12 @@ export class TikTokChatBot {
     }
 
     connect() {
-        // this.ttLiveConn.connect().then((state) => {
-        //     state = this.ttLiveConn.getState();
-        //     this.ttLogger.info(`Connected to roomId ${ state.roomId }`, 'connection');
-        // }).catch((err) => {
-        //     this.ttLogger.error('Failed to connect', 'connection');
-        // });
+        this.ttLiveConn.connect().then((state) => {
+            state = this.ttLiveConn.getState();
+            this.ttLogger.info(`Connected to roomId ${ state.roomId }`, 'connection');
+        }).catch((err) => {
+            this.ttLogger.error('Failed to connect', 'connection');
+        });
 
         this.ttLiveConn.on('disconnected', (data) => {
             this.ttLogger.warn('Disconnected', 'connection');
@@ -49,8 +49,10 @@ export class TikTokChatBot {
         });
 
         this.ttLiveConn.on('rawData', (messageTypeName, binary) => {
-            console.log('THIS IS THE rawData EVEnt from TIKTOK LIVE CONNECTION:', messageTypeName, binary);
+            // every message from the webSocket is sent here so i can manage it myself
+            // console.log('THIS IS THE rawData EVEnt from TIKTOK LIVE CONNECTION:', messageTypeName, binary);
         });
+
 
         /*
         * Events:
@@ -166,7 +168,7 @@ export class TikTokChatBot {
                     this.ttLogger.info('Stream ended by platform moderator (ban)', 'stream');
                     break;
                 default:
-                    this.ttLogger.info('Stream ended by unknown reason', 'stream');
+                    this.ttLogger.info('Stream ended by unknown reason with actionID: ' + actionId , 'stream');
                     break;
             }
         });

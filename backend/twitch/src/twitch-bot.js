@@ -5,6 +5,7 @@ import { parseMessage } from './irc-message-parser.js';
 import { parseNotice } from '../../chat-assets.js';
 import axios from 'axios';
 import pkg from 'websocket';
+import { Ping } from '../../assets.js';
 
 const { client: WebSocketClient } = pkg;
 
@@ -40,6 +41,7 @@ function extractText(notice) {
 
 export class TwitchChatBot extends EventEmitter {
     constructor(client_id, client_secret, oathToken, username, channel) {
+
         super();
         this.logger = new Logger('TTV-BOT');
         this.clientId = client_id;
@@ -114,7 +116,10 @@ export class TwitchChatBot extends EventEmitter {
                 this.logger.warn('Connection closed', 'connection');
             });
 
-            ping(this.chatSocketConnection, this.logger, 60000, 1, 'Twitch IRC');
+            // this.twitchIrcPinger = new Ping(this.chatSocketConnection, 'PONG :tmi.twitch.tv', 'twitch-irc', 60000, 1)
+            // this.twitchIrcPinger.ping()
+
+            // ping(this.chatSocketConnection, this.logger, 60000, 1, 'Twitch IRC');
         });
 
         this.chatSocket.connect('wss://irc-ws.chat.twitch.tv:443', 'irc');
@@ -124,7 +129,7 @@ export class TwitchChatBot extends EventEmitter {
     async disconnect() {
         if (this.status) {
             this.chatSocketConnection.close();
-            this.status.connected = false;
+            this.status = false;
         }
     }
 

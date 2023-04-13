@@ -106,7 +106,7 @@ twitchEventSub.listen();
 
 import { TikTokChatBot } from './tiktok/src/tiktok-bot.js';
 
-const tiktokChatBot = new TikTokChatBot('jstjxel', process.env.TIKTOK_CLIENT_SESSION_ID);
+const tiktokChatBot = new TikTokChatBot('jstjxel_official', process.env.TIKTOK_CLIENT_SESSION_ID);
 
 tiktokChatBot.connect();
 

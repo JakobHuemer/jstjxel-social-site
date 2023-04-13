@@ -10,6 +10,33 @@ async function requestHooks(twitchEventSub) {
     let userId = await twitchEventSub.getUserId(twitchEventSub.ttvUserName);
     let sessionId = twitchEventSub.sessionId;
 
+    // ALL HOOKS:
+    /*
+    *
+    * channel.follow
+    * channel.subscribe
+    * channel.subscription.end
+    * channel.subscription.gift
+    * channel.subscription.message
+    * channel.cheer
+    * channel.raid
+    * channel.ban
+    * channel.unban
+    * channel.poll.begin
+    * channel.poll.progress
+    * channel.poll.end
+    * channel.prediction.begin
+    * channel.prediction.progress
+    * channel.prediction.lock
+    * channel.prediction.end
+    * channel.hype_train.begin
+    * channel.hype_train.progress
+    * channel.hype_train.end
+    * channel.shoutout.create
+    *
+    *
+    * */
+
     let subscriptions = [
         {
             type: 'channel.follow',
@@ -68,6 +95,113 @@ async function requestHooks(twitchEventSub) {
                 broadcaster_user_id: userId,
             }
         },
+        {
+            type: 'channel.raid',
+            version: 1,
+            condition: {
+                to_broadcaster_user_id: userId,
+            }
+        },
+        // {
+        //     type: 'channel.ban',
+        //     version: 1,
+        //     condition: {
+        //         broadcaster_user_id: userId,
+        //     }
+        // },
+        // {
+        //     type: 'channel.unban',
+        //     version: 1,
+        //     condition: {
+        //         broadcaster_user_id: userId,
+        //     }
+        // },
+        {
+            type: 'channel.poll.begin',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+            }
+        },
+        {
+            type: 'channel.poll.progress',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+            }
+        },
+        {
+            type: 'channel.poll.end',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+            }
+        },
+        {
+            type: 'channel.prediction.begin',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+            }
+        },
+        {
+            type: 'channel.prediction.progress',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+            }
+        },
+        {
+            type: 'channel.prediction.lock',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+            }
+        },
+        {
+            type: 'channel.prediction.end',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+            }
+        },
+        {
+            type: 'channel.hype_train.begin',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+            }
+        },
+        {
+            type: 'channel.hype_train.progress',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+            }
+        },
+        {
+            type: 'channel.hype_train.end',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+            }
+        },
+        {
+            type: 'channel.shoutout.create',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+                moderator_user_id: userId
+            }
+        },
+        {
+            type: 'channel.shoutout.receive',
+            version: 1,
+            condition: {
+                broadcaster_user_id: userId,
+                moderator_user_id: userId
+            }
+        }
     ];
 
 
