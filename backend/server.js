@@ -52,6 +52,11 @@ webApp.get('/stream/chat', (req, res) => {
     res.sendFile('./stream-ass/popup-chat/popup-chat.html', { root: './frontend/dist/' });
 });
 
+webApp.get("/data/fortnite", hasSharedSecret, async (req, res) => {
+    let fnData = fs.readFileSync("./backend/public/fndata.json", "utf-8")
+    res.json(JSON.parse(fnData));
+})
+
 
 webApp.use(express.static('./frontend/dist'));
 
