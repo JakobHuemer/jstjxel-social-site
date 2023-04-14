@@ -229,7 +229,7 @@ export class TikTokChatBot {
 
 
     eventHandler(eventType, data) {
-        console.log('THIS IS THE EVENT HANDLER', eventType, data);
+        // console.log('THIS IS THE EVENT HANDLER', eventType, data);
 
         // let dataStructure = {
         //     eventType: "chat",
