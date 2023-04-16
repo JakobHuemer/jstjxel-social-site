@@ -105,8 +105,23 @@ export class TwitchChatBot extends EventEmitter {
 
             this.chatSocketConnection = conn;
             await authenticate(this);
+
             await this.chatSocketConnection.sendUTF(`JOIN #${ this.channel }`);
             await messageHandler(this);
+
+            axios.get('https://api.twitch.tv/helix/streams?user_login=' + this.channel, {
+                headers: {
+                    'Client-ID': this.clientId,
+                    'Authorization': 'Bearer ' + await this.getBearerToken(),
+                }
+            }).then((res) => {
+                if (res.data.data.length === 0) {
+                    if (this.chatSocketConnection) {
+                        this.logger.info('Stream is offline, leaving channel', 'chat');
+                        this.chatSocketConnection.sendUTF(`PART #${ this.channel }`);
+                    }
+                }
+            });
 
             this.chatSocketConnection.on('error', (error) => {
                 this.logger.error(error, 'connection');
@@ -233,7 +248,7 @@ function messageHandler(twitchChatBot) {
                             // pLog('The channel must have banned (/ban) the bot.', 'TWITCH');
                             // console.log(parsedMessage)
                             if (parsedMessage.source.nick === twitchChatBot.username) {
-                                twitchChatBot.logger.warn('The channel must have banned (/ban) the bot.', 'TWITCH');
+                                twitchChatBot.logger.warn('Left the channel, maybe banned (/ban) from the channel', 'chat');
                             }
                             break;
                         case

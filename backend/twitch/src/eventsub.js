@@ -468,7 +468,11 @@ export class TwitchEventSub {
 
                 break;
             case 'stream.online':
-                twitchChatBot.connect();
+                if (twitchChatBot.chatSocketConnection) {
+                    twitchChatBot.logger.info("Rejoining chat channel after stream went offline", "chat")
+                    twitchChatBot.chatSocketConnection.sendUTF("JOIN #" + twitchChatBot.channel)
+                }
+
                 setTimeout(() => {
 
                     let onlineNotice = [
@@ -477,9 +481,13 @@ export class TwitchEventSub {
                     ]
 
                     twitchChatBot.sendChatNotice(onlineNotice, true);
-                }, 10000)
+                }, 10000);
                 break;
             case 'stream.offline':
+                if (twitchChatBot.chatSocketConnection) {
+                    twitchChatBot.logger.info("Parting chat channel after stream went offline", "chat")
+                    twitchChatBot.chatSocketConnection.sendUTF("PART #" + twitchChatBot.channel)
+                }
 
                 let offlineNotice = [
                     { text: 'Stream', bold: true, underlined: false, color: '#6441a5' },
@@ -487,7 +495,6 @@ export class TwitchEventSub {
                 ]
 
                 twitchChatBot.sendChatNotice(offlineNotice, true);
-                twitchChatBot.disconnect();
                 break;
             default:
                 this.eventLogger.warn('Unknown event type of: ' + payload.subscription.type, 'subscription');

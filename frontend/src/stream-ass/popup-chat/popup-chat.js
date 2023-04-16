@@ -22,22 +22,8 @@ chatSocket.on('tiktok-event', (data) => {
 });
 
 chatSocket.on('twitch-chat-notice', (data) => {
-    let sampleData = [
-        {
-            text: 'hallo',
-            bold: true,
-            underlined: true,
-            color: '#FF0000'
-        },
-        {
-            text: 'welt',
-            bold: false,
-            underlined: false,
-            color: '#00FF00'
-        }
-    ];
 
-    createNoticeContent(data);
+    createNoticeContent(data.comments);
 });
 
 
