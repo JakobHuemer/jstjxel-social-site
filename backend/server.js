@@ -13,6 +13,9 @@ import https from 'https';
 import fs from 'fs';
 import express from 'express';
 
+const api = express();
+const apiPort = 3000;
+
 const webApp = express();
 const webPort = 443;
 
@@ -57,8 +60,13 @@ webApp.get("/data/fortnite", hasSharedSecret, async (req, res) => {
     res.json(JSON.parse(fnData));
 })
 
+webApp.get("/gamestats/fortnite", async (req, res) => {
+    res.sendFile("./gamestats/fortnite/fortnitestats.html", { root: './frontend/dist'})
+})
 
 webApp.use(express.static('./frontend/dist'));
+
+
 
 
 // webApp.get('*', (req, res) => {
@@ -68,6 +76,13 @@ webApp.use(express.static('./frontend/dist'));
 
 https.createServer(webAppOptions, webApp).listen(webPort, () => {
     httpLogger.log(`Webserver listening on port ${ webPort }`, 'web server');
+});
+
+// API on PORT 3000
+
+api.get('/api/v1/fortnitestats', async (req, res) => {
+    let params = req.params;
+    console.log(params);
 });
 
 // TWITCH CHAT BOT -------------------------------------------------------------------------

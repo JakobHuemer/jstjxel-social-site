@@ -30,22 +30,23 @@ export class TikTokChatBot {
             this.ttLogger.info(`Connected to roomId ${ state.roomId }`, 'connection');
         }).catch((err) => {
             this.ttLogger.error('Failed to connect', 'connection');
+            console.log(err);
         });
 
         this.ttLiveConn.on('disconnected', (data) => {
             this.ttLogger.warn('Disconnected', 'connection');
-            this.status = false;
+            this.ttLogger.info("Trying to reconnect...", 'connection');
+            this.connect();
         });
 
         this.ttLiveConn.on('error', (err) => {
             console.log(err);
-            this.status = false;
+            this.ttLiveConn.disconnect();
             // this.ttLogger.error(err, 'stream');
         });
 
         this.ttLiveConn.on('connected', () => {
-            this.ttLogger.info('Connected to stream', 'stream');
-            this.status = true;
+            this.ttLogger.info('Connected to stream', 'connection');
         });
 
         this.ttLiveConn.on('rawData', (messageTypeName, binary) => {

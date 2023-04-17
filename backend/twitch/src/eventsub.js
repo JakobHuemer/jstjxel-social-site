@@ -291,8 +291,8 @@ export class TwitchEventSub {
                         break;
                     case 'session_keepalive':
                         this.keepAliveCount++;
-                        if (this.keepAliveCount % 12 === 0) {
-                            this.eventLogger.log('Keepalive #' + this.keepAliveCount, 'keepalive');
+                        if (this.keepAliveCount % 1440 === 0) {
+                            this.eventLogger.log('Keepalive #' + this.keepAliveCount / 1440, 'keepalive');
                         }
                         break;
                     case 'session_reconnect':

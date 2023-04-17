@@ -226,7 +226,7 @@ function messageHandler(twitchChatBot) {
                         case
                         'PING'
                         :
-                            twitchChatBot.logger.log('RECEIVING PING FROM TWITCH SERVER', 'PING');
+                            // twitchChatBot.logger.log('RECEIVING PING FROM TWITCH SERVER', 'PING');
                             twitchChatBot.chatSocketConnection.sendUTF('PONG ' + parsedMessage.parameters);
                             break;
                         case

@@ -13,7 +13,8 @@ export default defineConfig({
                 twitchoverlay: root + '/stream-ass/overlay/overlay.html',
                 404: root + '/404/404.html',
                 linktree: root + '/linktree/linktree.html',
-                popupChat: root + "/stream-ass/popup-chat/popup-chat.html"
+                popupChat: root + "/stream-ass/popup-chat/popup-chat.html",
+                fortniteStats: root + "/gamestats/fortnite/fortnitestats.html"
             },
             external: [
                 /^node:.*/,
