@@ -218,13 +218,13 @@ function parseCommand(rawCommandComponent, logger) {
             };
             break;
         case 'RECONNECT':
-            logger.wrn('The Twitch IRC server is about to terminate the webSocketMessageServerConnection for maintenance.');
+            logger.warn('The Twitch IRC server is about to terminate the webSocketMessageServerConnection for maintenance.');
             parsedCommand = {
                 command: commandParts[0]
             };
             break;
         case '421':
-            logger.err(`Unsupported IRC command: ${ commandParts[2] }`);
+            logger.error(`Unsupported IRC command: ${ commandParts[2] }`);
             return null;
         case '001':  // Logged in (successfully authenticated).
             parsedCommand = {
@@ -243,7 +243,7 @@ function parseCommand(rawCommandComponent, logger) {
             logger.log(`numeric message: ${ commandParts[0] }`, 'TW info');
             return null;
         default:
-            logger.logWrn(`\nUnexpected command: ${ commandParts[0] }\n`);
+            logger.warn(`\nUnexpected command: ${ commandParts[0] }\n`);
             return null;
     }
 

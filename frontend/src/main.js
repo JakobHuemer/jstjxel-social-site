@@ -373,6 +373,7 @@ async function sendComment() {
     if (!isValid(document.querySelector('.comment-input').value)) return;
     let message = document.querySelector('.comment-input').value;
     document.querySelector('.comment-input').value = '';
+    updateCommentInputHeight();
     // Check if there is a cookie named "token"
     let token;
     let username;
