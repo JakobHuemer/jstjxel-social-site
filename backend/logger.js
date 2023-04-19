@@ -12,7 +12,7 @@ export class Logger {
         let data = {
             message: message,
             protocol: this.PROTOCOL,
-            subProtocol: subProtocol.replace(/\s+/g, '-').toUpperCase(),
+            subProtocol: subProtocol?.replace(/\s+/g, '-').toUpperCase() || '-----',
             type: 'log',
             timestamp: new Date(),
             color: "#ffffff"
