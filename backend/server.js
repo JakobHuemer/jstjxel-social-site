@@ -55,18 +55,26 @@ webApp.get('/stream/chat', (req, res) => {
     res.sendFile('./stream-ass/popup-chat/popup-chat.html', { root: './frontend/dist/' });
 });
 
-webApp.get("/data/fortnite", hasSharedSecret, async (req, res) => {
-    let fnData = fs.readFileSync("./backend/public/fndata.json", "utf-8")
+webApp.get('/data/fortnite', hasSharedSecret, async (req, res) => {
+    let fnData = fs.readFileSync('./backend/public/fndata.json', 'utf-8');
     res.json(JSON.parse(fnData));
-})
+});
 
-webApp.get("/gamestats/fortnite", async (req, res) => {
-    res.sendFile("./gamestats/fortnite/fortnitestats.html", { root: './frontend/dist'})
-})
+webApp.get('/gamestats/fortnite', async (req, res) => {
+    res.sendFile('./gamestats/fortnite/fortnitestats.html', { root: './frontend/dist' });
+});
+
+webApp.get('/discord', (req, res) => {
+    res.redirect('https://discord.gg/sUz82BCXzf');
+});
+webApp.get('/dc', (req, res) => {
+    res.redirect('https://discord.gg/sUz82BCXzf');
+});
+webApp.get('/disc', (req, res) => {
+    res.redirect('https://discord.gg/sUz82BCXzf');
+});
 
 webApp.use(express.static('./frontend/dist'));
-
-
 
 
 // webApp.get('*', (req, res) => {
