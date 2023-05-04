@@ -21,28 +21,28 @@ function logParser(msg) {
     // msg.data.color = '#FFFFFF';
     switch (msg.data.type) {
         case 'log':
-            console.log(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            console.log(`[${ localTimestamp }]`, `${ msg.data.protocol }`, `${ msg.data.subProtocol }:`, `${ msg.data.message }`);
             // msg.data.color = '#FFFFFF';
             break;
         case 'err':
-            console.error(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            console.error(`[${ localTimestamp }]`, `${ msg.data.protocol }`, `${ msg.data.subProtocol }:`, `${ msg.data.message }`);
             // msg.data.color = '#FF0000';
             break;
         case 'inf':
-            console.info(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            console.info(`[${ localTimestamp }]`, `${ msg.data.protocol }`, `${ msg.data.subProtocol }:`, `${ msg.data.message }`);
             // msg.data.color = '#00FF00';
             break;
         case 'wrn':
-            console.warn(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            console.warn(`[${ localTimestamp }]`, `${ msg.data.protocol }`, `${ msg.data.subProtocol }:`, `${ msg.data.message }`);
             // msg.data.color = '#FFFF00';
             break;
         case 'dbg':
-            console.debug(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            console.debug(`[${ localTimestamp }]`, `${ msg.data.protocol }`, `${ msg.data.subProtocol }:`, `${ msg.data.message }`);
             // msg.data.color = '#00FFFF';
             break;
         default:
             // console.log('default');
-            console.log(`[${ localTimestamp }] ${ msg.data.protocol } ${ msg.data.subProtocol }: ${ msg.data.message }`);
+            console.log(`[${ localTimestamp }]`, `${ msg.data.protocol }`, `${ msg.data.subProtocol }:`, `${ msg.data.message }`);
     }
     broadcast(JSON.stringify(msg));
 

@@ -117,8 +117,9 @@ export class TwitchChatBot extends EventEmitter {
             }).then((res) => {
                 if (res.data.data.length === 0) {
                     if (this.chatSocketConnection) {
-                        this.logger.info('Stream is offline, leaving channel', 'chat');
-                        this.chatSocketConnection.sendUTF(`PART #${ this.channel }`);
+                        // TODO: enable this back
+                        // this.logger.info('Stream is offline, leaving channel', 'chat');
+                        // this.chatSocketConnection.sendUTF(`PART #${ this.channel }`);
                     }
                 }
             });
@@ -138,7 +139,6 @@ export class TwitchChatBot extends EventEmitter {
         });
 
         this.chatSocket.connect('wss://irc-ws.chat.twitch.tv:443', 'irc');
-
     }
 
     async disconnect() {
@@ -160,6 +160,20 @@ export class TwitchChatBot extends EventEmitter {
 
         return res.data.access_token;
     }
+
+    async getUserId(username) {
+        const response = await axios.get('https://api.twitch.tv/helix/users', {
+            params: {
+                'login': username
+            }, headers: {
+                'Authorization': 'Bearer ' + await this.getBearerToken(),
+                'Client-Id': this.clientId,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        return response.data.data[0].id;
+    }
 }
 
 function messageHandler(twitchChatBot) {
@@ -174,7 +188,7 @@ function messageHandler(twitchChatBot) {
             // console.log(`Message received (${new Date().toISOString()}): '${rawIrcMessage}'\n`);
 
             let messages = rawIrcMessage.split('\r\n');  // The IRC message may contain one or more messages.
-            messages.forEach(message => {
+            messages.forEach(async (message) => {
 
                 let parsedMessage = parseMessage(message, twitchChatBot.logger);
 
@@ -188,6 +202,42 @@ function messageHandler(twitchChatBot) {
                             // Ignore all messages except the '!move' bot
                             // command. A user can post a !move command to change the
                             // interval for when the bot posts its move message.
+
+                            // test for twitch clip
+                            if (parsedMessage.parameters.includes('clips.twitch.tv')) {
+                                let clipString = parsedMessage.parameters.match(/(https?:\/\/)?clips\.twitch\.tv\/\S+/)[0];
+
+                                // twitchChatBot.logger.log('Twitch clip detected: ' + clipString, 'MESSAGE');
+
+                                //     check if the clip is from user with name jstjxel
+                                // twitchChatBot.logger.info('clip id: ' + clipString.split('/').pop(), 'message clip');
+
+
+                                let config = {
+                                    method: 'get',
+                                    maxBodyLength: Infinity,
+                                    url: 'https://api.twitch.tv/helix/clips?id=DeadHelplessVultureBrainSlug-tZeskHGPHGYhvkGe',
+                                    headers: {
+                                        'Authorization': 'Bearer peuobz67asnk6ko6hbbqaz9960gprj',
+                                        'Client-Id': 'exrnfxw08phplcq3uuf8adk0jasb30'
+                                    }
+                                };
+
+                                axios.request(config)
+                                    .then((response) => {
+
+                                        if (response.data.data[0].broadcaster_name === twitchChatBot.channel) {
+                                            // TODO: send clipString to discordbot
+
+                                            twitchChatBot.logger.log('Clip from jstjxel detected: ' + clipString, 'message clip');
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        console.log(error);
+                                    });
+
+                            }
+
                             let commandMessage = parsedMessage.parameters;
                             // twitchChatBot.message(parsedMessage);
                             twitchChatBot.messageServer.send(parsedMessage);
@@ -274,3 +324,8 @@ function messageHandler(twitchChatBot) {
         }
     });
 }
+
+
+// curl -X GET 'https://api.twitch.tv/helix/users?id=DeadHelplessVultureBrainSlug-tZeskHGPHGYhvkGe' \
+// -H 'Authorization: Bearer olkbvd4u20h5wlaufcth8p3uhn04uf' \
+// -H 'Client-Id: exrnfxw08phplcq3uuf8adk0jasb30'
