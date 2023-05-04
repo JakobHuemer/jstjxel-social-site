@@ -8,7 +8,21 @@ config();
 
 const httpLogger = new Logger('HTTP');
 
+// redirect port 80 to 443
+
+const httpApp = express();
+const httpPort = 80;
+
+httpApp.get('*', (req, res) => {
+    res.redirect('https://' + req.headers.host + req.url);
+});
+
+httpApp.listen(httpPort, () => {
+    httpLogger.info(`HTTP redirect listening on port ${httpPort}`, 'HTTP');
+});
+
 // WEB SERVER -------------------------------------------------------------------------
+
 import https from 'https';
 import fs from 'fs';
 import express from 'express';
@@ -60,7 +74,7 @@ webApp.get('/data/fortnite', hasSharedSecret, async (req, res) => {
     res.json(JSON.parse(fnData));
 });
 
-webApp.get('/gamestats/fortnite', async (req, res) => {
+webApp.get('/gamestats/fortnite', hasSharedSecret, async (req, res) => {
     res.sendFile('./gamestats/fortnite/fortnitestats.html', { root: './frontend/dist' });
 });
 

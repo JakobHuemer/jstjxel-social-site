@@ -140,3 +140,30 @@ body {
 
   }
 }
+
+.link-copy-button {
+  height: 4rem;
+  aspect-ratio: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform .1s;
+
+
+  &:hover {
+    transform: scale(1.2);
+  }
+
+  &:active {
+    transform: scale(.9);
+  }
+
+  i {
+    color: black;
+    object-fit: contain;
+    font-size: 2rem;
+  }
+}
