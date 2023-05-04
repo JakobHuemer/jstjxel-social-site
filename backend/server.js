@@ -10,16 +10,16 @@ const httpLogger = new Logger('HTTP');
 
 // redirect port 80 to 443
 
-const httpApp = express();
-const httpPort = 80;
-
-httpApp.get('*', (req, res) => {
-    res.redirect('https://' + req.headers.host + req.url);
-});
-
-httpApp.listen(httpPort, () => {
-    httpLogger.info(`HTTP redirect listening on port ${httpPort}`, 'HTTP');
-});
+// const httpApp = express();
+// const httpPort = 80;
+//
+// httpApp.get('*', (req, res) => {
+//     res.redirect('https://' + req.headers.host + req.url);
+// });
+//
+// httpApp.listen(httpPort, () => {
+//     httpLogger.info(`HTTP redirect listening on port ${httpPort}`, 'HTTP');
+// });
 
 // WEB SERVER -------------------------------------------------------------------------
 
