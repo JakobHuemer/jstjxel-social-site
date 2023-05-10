@@ -10,16 +10,20 @@ const httpLogger = new Logger('HTTP');
 
 // redirect port 80 to 443
 
-// const httpApp = express();
-// const httpPort = 80;
-//
-// httpApp.get('*', (req, res) => {
-//     res.redirect('https://' + req.headers.host + req.url);
-// });
-//
-// httpApp.listen(httpPort, () => {
-//     httpLogger.info(`HTTP redirect listening on port ${httpPort}`, 'HTTP');
-// });
+const httpApp = express();
+const httpPort = 80;
+
+httpApp.get('*', (req, res) => {
+    res.redirect('https://' + req.headers.host + req.url);
+});
+
+try {
+    httpApp.listen(httpPort, () => {
+        httpLogger.info(`HTTP redirect listening on port ${ httpPort }`, 'HTTP');
+    });
+} catch (err) {
+    httpLogger.error(`HTTP redirect 80 to 443 failed to listen on port ${ httpPort }`, 'HTTP');
+}
 
 // WEB SERVER -------------------------------------------------------------------------
 
@@ -79,16 +83,16 @@ webApp.get('/gamestats/fortnite', hasSharedSecret, async (req, res) => {
 });
 
 webApp.get('/discord', (req, res) => {
-    res.redirect('https://discord.gg/sUz82BCXzf');
+    res.redirect(301,'https://discord.gg/sUz82BCXzf');
 });
 webApp.get('/dc', (req, res) => {
-    res.redirect('https://discord.gg/sUz82BCXzf');
+    res.redirect(301, 'https://discord.gg/sUz82BCXzf');
 });
 webApp.get('/disc', (req, res) => {
-    res.redirect('https://discord.gg/sUz82BCXzf');
+    res.redirect(301,'https://discord.gg/sUz82BCXzf');
 });
 webApp.get("/live", (req, res) => {
-    res.redirect("https://www.twitch.tv/jstjxel")
+    res.redirect(301,"https://www.twitch.tv/jstjxel")
 })
 
 webApp.use(express.static('./frontend/dist'));
