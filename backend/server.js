@@ -87,7 +87,7 @@ webApp.get('/dc', (req, res) => {
 webApp.get('/disc', (req, res) => {
     res.redirect('https://discord.gg/sUz82BCXzf');
 });
-webApp.get("live", (req, res) => {
+webApp.get("/live", (req, res) => {
     res.redirect("https://www.twitch.tv/jstjxel")
 })
 
