@@ -312,7 +312,11 @@ export class TwitchEventSub {
 
         });
 
-        this.eventSocket.connect('wss://eventsub-beta.wss.twitch.tv/ws');
+        // BETA
+        // this.eventSocket.connect('wss://eventsub-beta.wss.twitch.tv/ws');
+
+        // LIVE
+        this.eventSocket.connect('wss://eventsub.wss.twitch.tv/ws');
 
     }
 

@@ -14,7 +14,7 @@ const httpApp = express();
 const httpPort = 80;
 
 httpApp.get('*', (req, res) => {
-    res.redirect('https://' + req.headers.host + req.url);
+    res.redirect(301, 'https://' + req.headers.host + req.url);
 });
 
 try {
