@@ -95,6 +95,12 @@ webApp.get("/live", (req, res) => {
     res.redirect(301,"https://www.twitch.tv/jstjxel")
 })
 
+
+// Sponsor Route
+webApp.get("/sponsor", (req, res) => {
+    res.redirect(301, "https://strms.net/startrek_jstjxel")
+});
+
 webApp.use(express.static('./frontend/dist'));
 
 
@@ -106,6 +112,8 @@ webApp.use(express.static('./frontend/dist'));
 https.createServer(webAppOptions, webApp).listen(webPort, () => {
     httpLogger.log(`Webserver listening on port ${ webPort }`, 'web server');
 });
+
+
 
 // API on PORT 3000
 
