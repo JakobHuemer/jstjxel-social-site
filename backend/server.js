@@ -53,7 +53,7 @@ webApp.get('/dev/logs', hasSharedSecret, (req, res) => {
     res.sendFile('./dev/logs.html', { root: './frontend/dist/' });
 });
 
-webApp.get('/', hasSharedSecret, (req, res) => {
+webApp.get('/', (req, res) => {
     res.sendFile('./index.html', { root: './frontend/dist/' });
 });
 
