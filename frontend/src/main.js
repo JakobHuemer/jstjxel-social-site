@@ -2,6 +2,7 @@ import './style.scss';
 import escapeHtml from 'escape-html';
 import { SocketManager } from './socket-manager';
 import { TmiHandler } from './tmi-msg-sender';
+import { msg } from 'tmi.js/lib/parser';
 
 
 if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
@@ -218,6 +219,27 @@ function appendComment(comment) {
     let shouldScroll = commentContainer.scrollTop + commentContainer.clientHeight + 50 >= commentContainer.scrollHeight;
 
     comment.timestamp = `${ String(comment.timestamp.getHours()).padStart(2, '0') }:${ String(comment.timestamp.getMinutes()).padStart(2, '0') }`;
+
+    let shiftIndex = 0
+
+    Object.keys(comment.emotes)?.forEach((emoteId) => {
+        comment.emotes[emoteId]?.forEach((emotePositions) => {
+            console.log(`${emoteId}:\n${JSON.stringify(emotePositions, null, 2)}`)
+            const start = parseInt(emotePositions["startPosition"])
+            const end = parseInt(emotePositions["endPosition"])
+            console.log(start + " - " + end)
+
+            const emoteImgEl = `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${ emoteId }/static/dark/3.0" alt="">`
+
+            comment.message = comment.message.slice(0, start + shiftIndex) + emoteImgEl + comment.message.slice(end + 1 + shiftIndex)
+            // comment.message = comment.message.slice(0, start) + replacement + comment.message.slice(end);
+
+            shiftIndex += emoteImgEl.length - (end - start) - 1
+        })
+    })
+
+    console.log(comment.message)
+
     let elem = `<div class="twitch-message"> <span class="timestamp">${ comment.timestamp }</span> <span class="author" style="color: ${ comment.color }">${ escapeHtml(comment.author) }</span> <span class="message">${ escapeHtml(comment.message) }</span></div>`;
     commentContainer.innerHTML += elem;
 
