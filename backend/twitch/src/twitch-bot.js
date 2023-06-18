@@ -194,7 +194,7 @@ function messageHandler(twitchChatBot) {
 
                 if (parsedMessage) {
 
-                    // twitchChatBot.logger.debug(JSON.stringify(parsedMessage, null, 2), 'MESSAGE DEBUG');
+                    twitchChatBot.logger.debug(JSON.stringify(parsedMessage, null, 2), 'MESSAGE DEBUG');
                     // console.log(parsedMessage);
 
                     switch (parsedMessage.command.command) {
@@ -239,7 +239,9 @@ function messageHandler(twitchChatBot) {
                             }
 
                             let commandMessage = parsedMessage.parameters;
+
                             // twitchChatBot.message(parsedMessage);
+                            console.log(`PARSED MESSAGE: ------------------------------------------------------\n${ JSON.stringify(parsedMessage, null, 2) }`);
                             twitchChatBot.messageServer.send(parsedMessage);
 
                             twitchChatBot.logger.log('MESSAGE: ' + parsedMessage.parameters, 'MESSAGE');
