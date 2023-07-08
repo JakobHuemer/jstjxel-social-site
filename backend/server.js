@@ -98,7 +98,7 @@ webApp.get("/live", (req, res) => {
 
 // Sponsor Route
 webApp.get("/sponsor", (req, res) => {
-    res.redirect(301, "https://strms.net/warpath_jstjxel")
+    res.redirect(307, "https://strms.net/warpath_jstjxel")
 });
 
 webApp.use(express.static('./frontend/dist'));
