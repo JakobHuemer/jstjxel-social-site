@@ -332,6 +332,8 @@ export class TwitchEventSub {
             this.eventLogger.error(error, 'Bearer');
         });
 
+        console.log(res.data);
+
         return res.data.access_token;
     }
 
